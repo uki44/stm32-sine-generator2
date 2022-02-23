@@ -29,3 +29,4 @@ int ARR_Cal(float freq)
 	ARR_Int = round(ARR_dec);
 	return ARR_Int -1;
 }
+

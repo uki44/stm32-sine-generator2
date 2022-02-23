@@ -196,7 +196,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
   if(htim == &htim6){
 
-    elapsedTime += 10;
+    elapsedTime += 1; // timer triggers every 10.03 seconds
 
   }
     
