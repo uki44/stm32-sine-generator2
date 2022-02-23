@@ -8,8 +8,8 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/uki44/Desktop/stm32-sine-generator2-main/Inc",
-                "/home/uki44/Desktop/stm32-sine-generator2-main/Src",
+                "/home/uki44/Desktop/stm32-sine-generator2/Inc",
+                "/home/uki44/Desktop/stm32-sine-generator2/Src",
                 "/home/uki44/.platformio/packages/framework-stm32cubel4/Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc",
                 "/home/uki44/.platformio/packages/framework-stm32cubel4/Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Src",
                 "/home/uki44/.platformio/packages/framework-stm32cubel4/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
@@ -90,8 +90,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/uki44/Desktop/stm32-sine-generator2-main/Inc",
-                    "/home/uki44/Desktop/stm32-sine-generator2-main/Src",
+                    "/home/uki44/Desktop/stm32-sine-generator2/Inc",
+                    "/home/uki44/Desktop/stm32-sine-generator2/Src",
                     "/home/uki44/.platformio/packages/framework-stm32cubel4/Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc",
                     "/home/uki44/.platformio/packages/framework-stm32cubel4/Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Src",
                     "/home/uki44/.platformio/packages/framework-stm32cubel4/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
