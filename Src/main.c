@@ -27,6 +27,7 @@
 #include "usb_device.h"
 #include "gpio.h"
 #include "stdarg.h"
+#include "usbd_customhid_if_template.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -34,7 +35,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+uint32_t sin_out[1000];
+uint32_t arr_len = 255;
+#define PI 3.141592653
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -49,7 +52,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint32_t elapsedTime = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,20 +103,26 @@ int main(void)
   MX_SPI1_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start(&htim2);
-  HAL_TIM_Base_Start(&htim6);
+  HAL_TIM_Base_Start(&htim2); // tim for dac
+  HAL_TIM_Base_Start(&htim6); // tim for delay
+
+  HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *)&sin_out, arr_len, DAC_ALIGN_12B_R);
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
+
+
 
 /**
  * @brief System Clock Configuration
@@ -182,6 +191,15 @@ void debug_printf(const char *format, ...)
   // while (HAL_UART_GetState(&huart3) != HAL_UART_STATE_READY){}
   // tukaj pokliči UART_SEND kjer pošlješ buffer z dolžino strlen(buffer)
   va_end(args);
+}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+{
+  if(htim == &htim6){
+
+    elapsedTime += 10;
+
+  }
+    
 }
 /* USER CODE END 4 */
 
