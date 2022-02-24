@@ -15,6 +15,7 @@
  *
  ******************************************************************************
  */
+//status leds are PB13 (built in led on the board), PB2 external red error led, PC7 external status led (no use yet)
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -28,6 +29,7 @@
 #include "gpio.h"
 #include "stdarg.h"
 #include "usbd_customhid_if_template.h"
+#include "functions.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -103,11 +105,17 @@ int main(void)
   MX_SPI1_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+
   HAL_TIM_Base_Start(&htim2); // tim for dac
   HAL_TIM_Base_Start(&htim6); // tim for delay
 
-  HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *)&sin_out, arr_len, DAC_ALIGN_12B_R);
-  
+  calcsin(sin_out,3.3);  
+
+  HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *)&sin_out, arr_len, DAC_ALIGN_12B_R); //starts the DAC with DMA reading data from sin_out array
+
+  debug_printf("successful init");
+
+  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_13,1); //vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -215,6 +223,8 @@ void Error_Handler(void)
   while (1)
   {
     debug_printf("error \r\n");
+    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_2,1); // error led 1
+    
   }
   /* USER CODE END Error_Handler_Debug */
 }
