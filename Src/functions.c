@@ -4,6 +4,7 @@
 #include "main.h"
 #include "tim.h"
 #include "math.h"
+#include "usbd_custom_hid_if.h"
 
 
 void calcsin(uint32_t *sin_arr, uint8_t V)
@@ -60,8 +61,8 @@ float getVoltage(uint8_t *arr, uint8_t n)
 
 float getFreq(uint8_t *arr, uint8_t n)
 {
-
-
+	float freqn = 0; 
+	buffer1[1];
 
 	return 10; // added to remove compiler warning, delete later
 }
