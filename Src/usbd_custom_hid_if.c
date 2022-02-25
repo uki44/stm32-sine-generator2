@@ -192,22 +192,22 @@ static int8_t CUSTOM_HID_DeInit_FS(void)
 static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
 {
   /* USER CODE BEGIN 6 */
-  // UNUSED(event_idx);
-  // UNUSED(state);
+   UNUSED(event_idx);
+   UNUSED(state);
 
   /* Start next USB packet transfer once data processing is completed */
   // USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceFS);
   USBD_CUSTOM_HID_HandleTypeDef *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)hUsbDeviceFS.pClassData;
 
   memcpy((uint8_t *)buffer, hhid->Report_buf, 64);
-  // USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS,(uint8_t*)buffer,64);
-  if (buffer[0] == 1)
+   //USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS,(uint8_t*)buffer,64);
+  if (buffer[1] == 1)
   {
 
     memcpy(buffer1, buffer, 64);
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)buffer1, 64);
   }
-  if (buffer[0] == 2)
+  if (buffer[1] == 2)
   {
 
     memcpy(buffer2, buffer, 64);
@@ -216,6 +216,7 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
   /*for(int i = 1; i<64;i++){
         debug_printf("%d \r\n",buffer[i]);
       }*/
+  //USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);
   /* USER CODE END 6 */
 }
