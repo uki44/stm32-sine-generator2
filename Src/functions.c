@@ -62,7 +62,7 @@ float getVoltage(uint8_t *arr, uint8_t n)
 float getFreq(uint8_t *arr, uint8_t n)
 {
 	float freqn = 0; 
-	buffer1[1];
+	freqn = buffer1[1];
 
 	return 10; // added to remove compiler warning, delete later
 }
