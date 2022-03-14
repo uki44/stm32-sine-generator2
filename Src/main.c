@@ -111,7 +111,7 @@ int main(void)
 
   calcsin(sin_out,3.3);  
 
-  HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *)&sin_out, arr_len, DAC_ALIGN_12B_R); //starts the DAC with DMA reading data from sin_out array
+  HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *) sin_out, arr_len, DAC_ALIGN_12B_R); //starts the DAC with DMA reading data from sin_out array
 
   debug_printf("successful init");
 
