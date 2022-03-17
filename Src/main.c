@@ -40,6 +40,10 @@
 uint32_t sin_out[1000];
 uint32_t arr_len = 255;
 #define PI 3.141592653
+
+float Frekvence[100];
+float Napetosti[100];
+float cas[100];
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
