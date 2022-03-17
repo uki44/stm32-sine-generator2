@@ -5,7 +5,7 @@
 #include "tim.h"
 #include "math.h"
 #include "usbd_custom_hid_if.h"
-
+#include "string.h"
 
 void calcsin(uint32_t *sin_arr, uint8_t V)
 {
@@ -63,11 +63,29 @@ float getFreq(uint8_t *arr, uint8_t n)
 {
 	float freqn = 0; 
 	freqn = buffer1[1];
-
+	UNUSED(freqn); // added to supress compiler warning, delete later
 	return 10; // added to remove compiler warning, delete later
 }
 int getDuration(uint8_t *arr, uint8_t n)
 {
 
 	return 0; // added to remove compiler warning, delete later
+}
+
+float assembleFloat(uint8_t* valArr, uint8_t index){
+
+uint8_t tempArr[4];
+uint8_t maxInd = index + 4;
+float retVal;
+
+for(int i = 0;index < maxInd; index++){
+
+	tempArr[i] = valArr[index];
+	i++;
+}
+
+memcpy(&retVal,&tempArr,sizeof(retVal));
+
+return retVal;
+
 }

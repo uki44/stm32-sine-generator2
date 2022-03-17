@@ -16,3 +16,4 @@ int ARR_Cal(float freq);
 float getVoltage(uint8_t* arr, uint8_t n);
 float getFreq(uint8_t* arr, uint8_t n);
 int getDuration(uint8_t* arr, uint8_t n);
+float assembleFloat(uint8_t* valArr, uint8_t index);
