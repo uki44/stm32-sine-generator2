@@ -95,6 +95,7 @@ uint8_t buffer[64];
 uint8_t buffer1[64];
 uint8_t buffer2[64];
 uint8_t Report_buf[64];
+extern int state;
 /* USER CODE END EXPORTED_VARIABLES */
 
 /**
@@ -107,7 +108,7 @@ uint8_t Report_buf[64];
   */
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
-
+int8_t USBD_CUSTOM_HID_SendReport_FS(uint8_t *report, uint16_t len);
 /* USER CODE END EXPORTED_FUNCTIONS */
 
 /**

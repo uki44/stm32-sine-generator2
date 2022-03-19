@@ -66,6 +66,7 @@ uint8_t buffer[64];
 uint8_t buffer1[64];
 uint8_t buffer2[64];
 uint8_t Report_buf[64];
+ extern int state = 0;
 /* USER CODE END PRIVATE_DEFINES */
 
 /**
@@ -108,7 +109,7 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
         0x91, 0x02,       // OUTPUT (Data,Var,Abs)
         0x95, 0x01,       // REPORT_COUNT (1)
         0x09, 0x01,       // USAGE (Undefined)
-        0xb1, 0x02,
+        0x91, 0x02,
         /* USER CODE END 0 */
         0xC0 /*     END_COLLECTION	             */
 };
@@ -196,27 +197,30 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
    UNUSED(state);
 
   /* Start next USB packet transfer once data processing is completed */
-  // USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceFS);
-  USBD_CUSTOM_HID_HandleTypeDef *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)hUsbDeviceFS.pClassData;
 
-  memcpy((uint8_t *)buffer, hhid->Report_buf, 64);
-   //USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS,(uint8_t*)buffer,64);
-  if (buffer[1] == 1)
+  USBD_CUSTOM_HID_HandleTypeDef *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)hUsbDeviceFS.pClassData;
+  memcpy((uint8_t *) buffer, hhid->Report_buf, 64);
+
+  
+    if (buffer[1] == 1)
   {
 
-    memcpy(buffer1, buffer, 64);
-    USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)buffer1, 64);
+    memcpy((uint8_t *) buffer1, (uint8_t *)buffer, 64);
+    
+    
+    debug_printf("recieved 1st array \r\n");
   }
   if (buffer[1] == 2)
   {
 
-    memcpy(buffer2, buffer, 64);
-    USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)buffer2, 64);
+    memcpy((uint8_t *) buffer2, (uint8_t *) buffer, 64);
+   
+    
+    debug_printf("recieved 2nd array \r\n");
   }
-  /*for(int i = 1; i<64;i++){
-        debug_printf("%d \r\n",buffer[i]);
-      }*/
-  //USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceFS);
+  
+  debug_printf("usb trigger \r\n");
+  USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);
   /* USER CODE END 6 */
 }
@@ -228,12 +232,12 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
  * @param  len: The report length
  * @retval USBD_OK if all operations are OK else USBD_FAIL
  */
-/*
-static int8_t USBD_CUSTOM_HID_SendReport_FS(uint8_t *report, uint16_t len)
+
+int8_t USBD_CUSTOM_HID_SendReport_FS(uint8_t *report, uint16_t len)
 {
-  return USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, report, len);
+  USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, report, len);
 }
-*/
+
 /* USER CODE END 7 */
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */

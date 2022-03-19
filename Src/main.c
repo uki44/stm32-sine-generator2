@@ -28,7 +28,7 @@
 #include "usb_device.h"
 #include "gpio.h"
 #include "stdarg.h"
-#include "usbd_customhid_if_template.h"
+#include "usbd_custom_hid_if.h"
 #include "functions.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -117,7 +117,7 @@ int main(void)
 
   HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *) sin_out, arr_len, DAC_ALIGN_12B_R); //starts the DAC with DMA reading data from sin_out array
 
-  debug_printf("successful init");
+  debug_printf("successful init \r\n");
 
   HAL_GPIO_WritePin(GPIOB,GPIO_PIN_13,1); //vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
   /* USER CODE END 2 */
@@ -126,6 +126,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+  
 
     /* USER CODE END WHILE */
 
