@@ -108,7 +108,7 @@ extern int state;
   */
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
-int8_t USBD_CUSTOM_HID_SendReport_FS(uint8_t *report, uint16_t len);
+//int8_t USBD_CUSTOM_HID_SendReport_FS(uint8_t *report, uint16_t len);
 /* USER CODE END EXPORTED_FUNCTIONS */
 
 /**
