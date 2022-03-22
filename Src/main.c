@@ -15,7 +15,7 @@
  *
  ******************************************************************************
  */
-//status leds are PB13 (built in led on the board), PB2 external red error led, PC7 external status led (no use yet)
+// status leds are PB13 (built in led on the board), PB2 external red error led, PC7 external status led (no use yet)
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -39,11 +39,14 @@
 /* USER CODE BEGIN PTD */
 uint32_t sin_out[1000];
 uint32_t arr_len = 255;
+uint32_t elapsedTime = 0;
 #define PI 3.141592653
+
 
 float Frekvence[100];
 float Napetosti[100];
 float cas[100];
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -58,7 +61,7 @@ float cas[100];
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint32_t elapsedTime = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -113,29 +116,49 @@ int main(void)
   HAL_TIM_Base_Start(&htim2); // tim for dac
   HAL_TIM_Base_Start(&htim6); // tim for delay
 
-  calcsin(sin_out,3.3);  
-
-  HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *) sin_out, arr_len, DAC_ALIGN_12B_R); //starts the DAC with DMA reading data from sin_out array
+  calcsin(sin_out, 3.3);
+  status = 0;
+  HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *)sin_out, arr_len, DAC_ALIGN_12B_R); // starts the DAC with DMA reading data from sin_out array
 
   debug_printf("successful init \r\n");
 
-  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_13,1); //vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1); // vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-  
 
+    
+    
+    if (status == 1)
+    {
+      debug_printf("entered state 0:%d, 1: \r\n",buffer[0],buffer[1]);
+      if (buffer[1] == 1)
+      {
+
+        memcpy((uint8_t *)buffer1, (uint8_t *)buffer, 64);
+
+        debug_printf("recieved 1st array \r\n");
+      }
+      if (buffer[1] == 2)
+      {
+
+        memcpy((uint8_t *)buffer2, (uint8_t *)buffer, 64);
+
+        debug_printf("recieved 2nd array \r\n");
+      }
+      status = 0;
+    }
+    
+    HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
-
-
 
 /**
  * @brief System Clock Configuration
@@ -205,14 +228,13 @@ void debug_printf(const char *format, ...)
   // tukaj pokliči UART_SEND kjer pošlješ buffer z dolžino strlen(buffer)
   va_end(args);
 }
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  if(htim == &htim6){
+  if (htim == &htim6)
+  {
 
     elapsedTime += 1; // timer triggers every 10.03 seconds
-
   }
-    
 }
 /* USER CODE END 4 */
 
@@ -228,8 +250,7 @@ void Error_Handler(void)
   while (1)
   {
     debug_printf("error \r\n");
-    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_2,1); // error led 1
-    
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, 1); // error led 1
   }
   /* USER CODE END Error_Handler_Debug */
 }
