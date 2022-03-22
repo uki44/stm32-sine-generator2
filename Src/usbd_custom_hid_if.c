@@ -20,7 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_custom_hid_if.h"
-
+#include "main.h"
 /* USER CODE BEGIN INCLUDE */
 
 /* USER CODE END INCLUDE */
@@ -62,11 +62,8 @@
  */
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
-uint8_t buffer[64];
-uint8_t buffer1[64];
-uint8_t buffer2[64];
-uint8_t Report_buf[64];
- extern int state = 0;
+
+
 /* USER CODE END PRIVATE_DEFINES */
 
 /**
@@ -193,34 +190,19 @@ static int8_t CUSTOM_HID_DeInit_FS(void)
 static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
 {
   /* USER CODE BEGIN 6 */
-   UNUSED(event_idx);
-   UNUSED(state);
+  /* UNUSED(event_idx);
+   UNUSED(state);*/
 
   /* Start next USB packet transfer once data processing is completed */
 
   USBD_CUSTOM_HID_HandleTypeDef *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)hUsbDeviceFS.pClassData;
   memcpy((uint8_t *) buffer, hhid->Report_buf, 64);
 
-  
-    if (buffer[1] == 1)
-  {
-
-    memcpy((uint8_t *) buffer1, (uint8_t *)buffer, 64);
-    
-    
-    debug_printf("recieved 1st array \r\n");
-  }
-  if (buffer[1] == 2)
-  {
-
-    memcpy((uint8_t *) buffer2, (uint8_t *) buffer, 64);
-   
-    
-    debug_printf("recieved 2nd array \r\n");
-  }
-  
+  status = 1;
+ /* 
   debug_printf("usb trigger \r\n");
-  USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceFS);
+  debug_printf("status: %d \r\n",status);*/
+ 
   return (USBD_OK);
   /* USER CODE END 6 */
 }
