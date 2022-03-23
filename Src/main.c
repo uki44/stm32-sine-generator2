@@ -134,11 +134,12 @@ int main(void)
     
     if (status == 1)
     {
-      debug_printf("entered state 0:%d, 1: \r\n",buffer[0],buffer[1]);
+      debug_printf("entered state 0:%d, 1:%d \r\n",buffer[0],buffer[1]);
       if (buffer[1] == 1)
       {
 
         memcpy((uint8_t *)buffer1, (uint8_t *)buffer, 64);
+        USBD_free(buffer);
 
         debug_printf("recieved 1st array \r\n");
       }
@@ -146,7 +147,7 @@ int main(void)
       {
 
         memcpy((uint8_t *)buffer2, (uint8_t *)buffer, 64);
-
+        USBD_free(buffer);
         debug_printf("recieved 2nd array \r\n");
       }
       status = 0;
