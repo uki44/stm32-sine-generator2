@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_custom_hid_if.h"
 #include "main.h"
+#include <stdlib.h>
 /* USER CODE BEGIN INCLUDE */
 
 /* USER CODE END INCLUDE */
@@ -49,6 +50,13 @@
  */
 
 /* USER CODE BEGIN PRIVATE_TYPES */
+
+extern uint8_t buffer1[64] = {0};
+extern uint8_t buffer2[64] = {0};
+uint8_t Report_buf[64]= {0};
+
+extern uint8_t buffer[64] = {0};
+
 
 /* USER CODE END PRIVATE_TYPES */
 
@@ -192,9 +200,10 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
   UNUSED(state);
 
   USBD_CUSTOM_HID_HandleTypeDef *hhid = (USBD_CUSTOM_HID_HandleTypeDef *)hUsbDeviceFS.pClassData;
-  memcpy((uint8_t *)buffer, hhid->Report_buf, 64);
-
+  memcpy(buffer, hhid->Report_buf, 64);
+ 
   status = 1;
+  USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceFS);
   /*
    debug_printf("usb trigger \r\n");
    debug_printf("status: %d \r\n",status);*/
@@ -210,12 +219,12 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
  * @param  len: The report length
  * @retval USBD_OK if all operations are OK else USBD_FAIL
  */
-/*
-static int8_t USBD_CUSTOM_HID_SendReport_FS(uint8_t *report, uint16_t len)
+
+/*int8_t USBD_CUSTOM_HID_SendReport_FS(uint8_t *report, uint16_t len)
 {
   USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, report, len);
-}
-*/
+}*/
+
 /* USER CODE END 7 */
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */

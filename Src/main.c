@@ -135,6 +135,7 @@ int main(void)
     if (status == 1)
     {
       debug_printf("entered state 0:%d, 1:%d \r\n",buffer[0],buffer[1]);
+
       if (buffer[1] == 1)
       {
 

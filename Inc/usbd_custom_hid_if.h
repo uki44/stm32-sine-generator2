@@ -91,9 +91,9 @@
 extern USBD_CUSTOM_HID_ItfTypeDef USBD_CustomHID_fops_FS;
 
 /* USER CODE BEGIN EXPORTED_VARIABLES */
-uint8_t buffer[64];
-uint8_t buffer1[64];
-uint8_t buffer2[64];
+extern uint8_t buffer[64]__attribute__ ((aligned)); 
+extern uint8_t buffer1[64];
+extern uint8_t buffer2[64];
 uint8_t Report_buf[64];
 
 /* USER CODE END EXPORTED_VARIABLES */
