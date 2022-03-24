@@ -43,9 +43,9 @@ uint32_t elapsedTime = 0;
 #define PI 3.141592653
 
 
-float Frekvence[100];
-float Napetosti[100];
-float cas[100];
+float frequencies[100];
+float voltages[100];
+float time[100];
 
 /* USER CODE END PTD */
 
@@ -114,7 +114,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_Base_Start(&htim2); // tim for dac
-  HAL_TIM_Base_Start(&htim6); // tim for delay
+  HAL_TIM_Base_Start_IT(&htim6); // tim for delay
 
   calcsin(sin_out, 3.3);
   status = 0;
@@ -236,7 +236,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {
 
     elapsedTime += 1; // timer triggers every 10.03 seconds
+    
   }
+  
 }
 /* USER CODE END 4 */
 
