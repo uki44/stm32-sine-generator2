@@ -30,6 +30,7 @@
 #include "stdarg.h"
 #include "usbd_custom_hid_if.h"
 #include "functions.h"
+#include "string.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -42,11 +43,9 @@ uint32_t arr_len = 255;
 uint32_t elapsedTime = 0;
 #define PI 3.141592653
 
-
-float frequencies[100];
-float voltages[100];
-float time[100];
-
+extern float frequencies[10] = {0};
+extern float voltages[10] = {0};
+extern int time[10] = {0};
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -113,7 +112,7 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_TIM_Base_Start(&htim2); // tim for dac
+  HAL_TIM_Base_Start(&htim2);    // tim for dac
   HAL_TIM_Base_Start_IT(&htim6); // tim for delay
 
   calcsin(sin_out, 3.3);
@@ -130,11 +129,9 @@ int main(void)
   while (1)
   {
 
-    
-    
     if (status == 1)
     {
-      debug_printf("entered state 0:%d, 1:%d \r\n",buffer[0],buffer[1]);
+     // debug_printf("entered state 0:%d, 1:%d \r\n", buffer[0], buffer[1]);
 
       if (buffer[1] == 1)
       {
@@ -143,6 +140,8 @@ int main(void)
         USBD_free(buffer);
 
         debug_printf("recieved 1st array \r\n");
+        debug_print_array(buffer1, 64);
+        
       }
       if (buffer[1] == 2)
       {
@@ -150,10 +149,26 @@ int main(void)
         memcpy((uint8_t *)buffer2, (uint8_t *)buffer, 64);
         USBD_free(buffer);
         debug_printf("recieved 2nd array \r\n");
-      }
+        debug_print_array(buffer2, 64);
+
+
+        printf("process data \r\n");
+        processData(frequencies, voltages, time, buffer1, buffer2);
+          
+        debug_printf("frequencies \r\n");
+        for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)frequencies[i]);}
+        debug_printf("voltages \r\n");
+        for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)voltages[i]);}
+        debug_printf("time \r\n");
+        for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)time[i]);}
+    
+
+
+      }  
+   
       status = 0;
     }
-    
+
     HAL_Delay(100);
     /* USER CODE END WHILE */
 
@@ -226,19 +241,18 @@ void debug_printf(const char *format, ...)
   va_start(args, format);
   vsnprintf(buffer, sizeof(buffer), format, args);
   HAL_UART_Transmit(&huart2, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
-  // while (HAL_UART_GetState(&huart3) != HAL_UART_STATE_READY){}
+   while (HAL_UART_GetState(&huart2) != HAL_UART_STATE_READY){}
   // tukaj pokliči UART_SEND kjer pošlješ buffer z dolžino strlen(buffer)
   va_end(args);
 }
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim == &htim6)
   {
 
     elapsedTime += 1; // timer triggers every 10.03 seconds
-    
   }
-  
 }
 /* USER CODE END 4 */
 

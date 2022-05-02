@@ -37,7 +37,7 @@ void setARR(uint8_t *values, uint8_t n)
 	int ARR_Val;
 	float freq;
 
-	freq = getFreq(values,n);
+	freq = getFreq(values, n);
 
 	ARR_Val = ARR_Cal(freq);
 
@@ -61,10 +61,10 @@ float getVoltage(uint8_t *arr, uint8_t n)
 
 float getFreq(uint8_t *arr, uint8_t n)
 {
-	float freqn = 0; 
+	float freqn = 0;
 	freqn = buffer1[1];
 	UNUSED(freqn); // added to supress compiler warning, delete later
-	return 10; // added to remove compiler warning, delete later
+	return 10;	   // added to remove compiler warning, delete later
 }
 int getDuration(uint8_t *arr, uint8_t n)
 {
@@ -72,20 +72,65 @@ int getDuration(uint8_t *arr, uint8_t n)
 	return 0; // added to remove compiler warning, delete later
 }
 
-float assembleFloat(uint8_t* valArr, uint8_t index){
+float assembleFloat(uint8_t *valArr, uint8_t index)
+{
 
-uint8_t tempArr[4];
-uint8_t maxInd = index + 4;
-float retVal;
+	uint8_t tempArr[4];
+	uint8_t maxInd = index + 4;
+	float retVal;
 
-for(int i = 0;index < maxInd; index++){
+	for (int i = 0; index < maxInd; index++)
+	{
 
-	tempArr[i] = valArr[index];
-	i++;
+		tempArr[i] = valArr[index];
+		i++;
+	}
+
+	memcpy(&retVal, tempArr, sizeof(retVal));
+
+	return retVal;
 }
 
-memcpy(&retVal,&tempArr,sizeof(retVal));
+void debug_print_array(uint8_t *arr, int size)
+{
 
-return retVal;
+	for (int i = 0; i < size; i++)
+	{
 
+		debug_printf("%d: %u \r\n", i, arr[i]);
+	}
+
+	return;
+}
+
+
+void processData(float *freq_arr, float *voltage_arr, int *time_arr, uint8_t *buff_arr1, uint8_t *buff_arr2)
+{
+
+	int arr_pos = 2, arr_pos2 = 2;
+	
+
+	for (int i = 0, snum = 0; i < 5; i++)
+	{
+		freq_arr[snum] = assembleFloat(buff_arr1, arr_pos);
+		arr_pos += 4;
+		voltage_arr[snum] = assembleFloat(buff_arr1, arr_pos);
+		arr_pos += 4;
+		time_arr[snum] = buff_arr1[arr_pos];
+		arr_pos += 1;
+		snum++;
+	}
+
+	for (int i = 0, snum = 5; i < 5; i++)
+	{
+		freq_arr[snum] = assembleFloat(buff_arr2, arr_pos2);
+		arr_pos2 += 4;
+		voltage_arr[snum] = assembleFloat(buff_arr2, arr_pos2);
+		arr_pos2 += 4;
+		time_arr[snum] = buff_arr1[arr_pos2];
+		arr_pos2 += 1;
+		snum++;
+	}
+
+	return;
 }

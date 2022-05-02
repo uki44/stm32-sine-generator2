@@ -37,6 +37,13 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 int status;
+
+extern float frequencies[10];
+extern float voltages[10];
+extern int time[10];
+
+
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

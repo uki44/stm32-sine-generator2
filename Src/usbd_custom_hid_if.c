@@ -58,6 +58,10 @@ uint8_t Report_buf[64]= {0};
 extern uint8_t buffer[64] = {0};
 
 
+
+
+
+
 /* USER CODE END PRIVATE_TYPES */
 
 /**

@@ -96,6 +96,11 @@ extern uint8_t buffer1[64];
 extern uint8_t buffer2[64];
 uint8_t Report_buf[64];
 
+
+
+
+
+
 /* USER CODE END EXPORTED_VARIABLES */
 
 /**
