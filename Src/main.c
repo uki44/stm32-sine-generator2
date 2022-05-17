@@ -133,7 +133,7 @@ int main(void)
 
     if (status == 1)
     {
-     // debug_printf("entered state 0:%d, 1:%d \r\n", buffer[0], buffer[1]);
+     // debug_printf("entered state 0:%d, 1:%d \r\n", buffer[0], buffer[1]); //debug information
 
       if (buffer[1] == 1)
       {
@@ -155,8 +155,10 @@ int main(void)
 
 
         printf("process data \r\n");
-        processData(frequencies, voltages, time, buffer1, buffer2);
-          
+        processData(frequencies, voltages, time, buffer1, buffer2); //converts data from int to float and writes it to 
+
+
+        /*debug information*/  
         debug_printf("frequencies \r\n");
         for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)frequencies[i]);}
         debug_printf("voltages \r\n");
@@ -172,11 +174,11 @@ int main(void)
     }
 
     if(processState == 1){
-      processState = 2;
-
-      HAL_TIM_Base_Start_IT(&htim2);
+       
       prescCalc(time,currentSet);
       setARR(frequencies,currentSet);
+      HAL_TIM_Base_Start_IT(&htim2);
+      processState = 2;
     
     }
     if(processState == 3){
@@ -282,10 +284,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
       processState = 1;
     
     }
-    
   }
-
 }
+
 /* USER CODE END 4 */
 
 /**

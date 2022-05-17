@@ -13,7 +13,7 @@
 
 void calcsin(uint32_t *sin_arr, uint8_t V);
 int ARR_Cal(float freq);
-void setARR(uint8_t *values, uint8_t n);
+void setARR(float *values, uint8_t n);
 float getVoltage(uint8_t* arr, uint8_t n);
 float getFreq(uint8_t* arr, uint8_t n);
 int getDuration(uint8_t* arr, uint8_t n);

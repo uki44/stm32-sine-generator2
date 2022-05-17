@@ -25,29 +25,29 @@ int ARR_Cal(float freq)
 {
 	int TIM_CLK = 32 * pow(10, 6); // timer frequency
 	int n = 256;				   // number of samples
-	int PRESC = 48 - 1;			   // timer prescaler that divides the frequency to 1MHz ( if set to 72-1);
+	int PRESC = 48 - 1;			   // timer prescaler that divides the frequency to 1MHz ( if set to 32 - 1 );
 	float ARR_dec;				   // decimal ARR value
 	int ARR_Int;
 	ARR_dec = (TIM_CLK / (PRESC * freq * n));
 	ARR_Int = round(ARR_dec);
 	return ARR_Int - 1;
 }
-void setARR(uint8_t *values, uint8_t n)
+void setARR(float *values, uint8_t n)
 {
 	int ARR_Val;
 	float freq;
 
-	freq = getFreq(values, n);
+	freq = values[n];
 
 	ARR_Val = ARR_Cal(freq);
 
-	if (ARR_Val >= 0)
+	if (ARR_Val > 0)
 	{
 		// TIM2->ARR = ARR_Val; // zapiše vrednost v register
 		__HAL_TIM_SET_AUTORELOAD(&htim2, ARR_Val);
 		//__HAL_TIM_SET_COUNTER(&htim2, ARR_Val);
 	}
-	if (ARR_Val < 0)
+	if (ARR_Val <= 0)
 	{
 
 		Error_Handler();
@@ -110,7 +110,7 @@ void processData(float *freq_arr, float *voltage_arr, int *time_arr, uint8_t *bu
 	int arr_pos = 2, arr_pos2 = 2;
 	
 
-	for (int i = 0, snum = 0; i < 5; i++)
+	for (int i = 0, snum = 0; i < 5; i++)   // converts the first half of the data set from int to float 
 	{
 		freq_arr[snum] = assembleFloat(buff_arr1, arr_pos);
 		arr_pos += 4;
@@ -121,7 +121,7 @@ void processData(float *freq_arr, float *voltage_arr, int *time_arr, uint8_t *bu
 		snum++;
 	}
 
-	for (int i = 0, snum = 5; i < 5; i++)
+	for (int i = 0, snum = 5; i < 5; i++)  // converts the second half of the data set from int to float 
 	{
 		freq_arr[snum] = assembleFloat(buff_arr2, arr_pos2);
 		arr_pos2 += 4;
@@ -166,7 +166,7 @@ void TIM_resetCounder(TIM_TypeDef* TIMx){
 
 
 }
-void setDigiPot(float* voltageArr, uint8_t digiPotAddr){
+void setDigiPot(float* voltageArr, uint8_t digiPotAddr){  //writes the value to the I2C digital potentiometer 
 
 
 
