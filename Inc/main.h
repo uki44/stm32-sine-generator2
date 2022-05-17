@@ -41,7 +41,7 @@ int status;
 extern float frequencies[10];
 extern float voltages[10];
 extern int time[10];
-
+extern int processState;
 
 
 /* USER CODE END ET */

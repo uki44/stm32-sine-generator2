@@ -50,7 +50,7 @@ void MX_DAC1_Init(void)
   /** DAC channel OUT1 config
   */
   sConfig.DAC_SampleAndHold = DAC_SAMPLEANDHOLD_DISABLE;
-  sConfig.DAC_Trigger = DAC_TRIGGER_T2_TRGO;
+  sConfig.DAC_Trigger = DAC_TRIGGER_T6_TRGO; //was DAC_TRIGGER_T2_TRGO but changed to DAC_TRIGGER_T6_TRGO
   sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
   sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_DISABLE;
   sConfig.DAC_UserTrimming = DAC_TRIMMING_FACTORY;
@@ -104,7 +104,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* dacHandle)
     __HAL_LINKDMA(dacHandle,DMA_Handle1,hdma_dac_ch1);
 
     /* DAC1 interrupt Init */
-    HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0, 0); // was TIM6_DAC_IRQn but changed to TIM6_DAC_IRQn
     HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
   /* USER CODE BEGIN DAC1_MspInit 1 */
 

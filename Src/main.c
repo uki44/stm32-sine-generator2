@@ -46,6 +46,8 @@ uint32_t elapsedTime = 0;
 extern float frequencies[10] = {0};
 extern float voltages[10] = {0};
 extern int time[10] = {0};
+extern int processState = 0;
+int currentSet = 0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -112,8 +114,8 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_TIM_Base_Start(&htim2);    // tim for dac
-  HAL_TIM_Base_Start_IT(&htim6); // tim for delay
+  //HAL_TIM_Base_Start(&htim2);    // tim for delay 32 bit
+  HAL_TIM_Base_Start_IT(&htim6); // tim for dac 16bit
 
   calcsin(sin_out, 3.3);
   status = 0;
@@ -168,6 +170,22 @@ int main(void)
    
       status = 0;
     }
+
+    if(processState == 1){
+      processState = 2;
+
+      HAL_TIM_Base_Start(&htim2);
+      prescCalc(time,currentSet);
+      setARR(frequencies,currentSet);
+    
+    }
+    if(processState == 3){
+      TIM_resetCounder(TIM2);
+      currentSet++;
+    }
+
+
+
 
     HAL_Delay(100);
     /* USER CODE END WHILE */
@@ -248,11 +266,25 @@ void debug_printf(const char *format, ...)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  if (htim == &htim6)
+  if (htim == &htim2)
   {
 
-    elapsedTime += 1; // timer triggers every 10.03 seconds
+    processState = 3;
+    
   }
+}
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+
+  if(GPIO_Pin == GPIO_PIN_13){
+
+    if(processState != 2){
+      
+      processState = 1;
+    
+    }
+    
+  }
+
 }
 /* USER CODE END 4 */
 

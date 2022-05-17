@@ -23,7 +23,7 @@ void calcsin(uint32_t *sin_arr, uint8_t V)
 
 int ARR_Cal(float freq)
 {
-	int TIM_CLK = 48 * pow(10, 6); // timer frequency
+	int TIM_CLK = 32 * pow(10, 6); // timer frequency
 	int n = 256;				   // number of samples
 	int PRESC = 48 - 1;			   // timer prescaler that divides the frequency to 1MHz ( if set to 72-1);
 	float ARR_dec;				   // decimal ARR value
@@ -133,4 +133,41 @@ void processData(float *freq_arr, float *voltage_arr, int *time_arr, uint8_t *bu
 	}
 
 	return;
+}
+
+int prescCalc(int* time,int index){
+
+	int prescVal;
+	int TIM_CLK = 32 * pow(10, 6);
+	unsigned long int ARR = pow(2,32) - 1;
+
+
+	prescVal= (TIM_CLK*time[index]*60)/ARR;
+
+	return prescVal;
+
+}
+uint32_t TIM_GetCounter(TIM_TypeDef* TIMx){
+
+	/* preveri če so parametri pravilni*/
+	assert_param(IS_TIM_ALL_PERIPH(TIMx)); 
+
+	/*vrne trenutno vrednost števca*/
+	return TIMx->CNT;
+
+}
+void TIM_resetCounder(TIM_TypeDef* TIMx){
+
+	/* preveri če so parametri pravilni*/
+	assert_param(IS_TIM_ALL_PERIPH(TIMx));
+
+	/*zapiše vrednost 0 v števec*/
+	TIMx->CNT = 0;
+
+
+}
+void setDigiPot(float* voltageArr, uint8_t digiPotAddr){
+
+
+	
 }
