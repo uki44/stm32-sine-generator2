@@ -169,5 +169,5 @@ void TIM_resetCounder(TIM_TypeDef* TIMx){
 void setDigiPot(float* voltageArr, uint8_t digiPotAddr){
 
 
-	
+
 }

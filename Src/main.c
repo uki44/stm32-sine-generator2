@@ -115,7 +115,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   //HAL_TIM_Base_Start(&htim2);    // tim for delay 32 bit
-  HAL_TIM_Base_Start_IT(&htim6); // tim for dac 16bit
+  HAL_TIM_Base_Start(&htim6); // tim for dac 16bit
 
   calcsin(sin_out, 3.3);
   status = 0;
@@ -174,7 +174,7 @@ int main(void)
     if(processState == 1){
       processState = 2;
 
-      HAL_TIM_Base_Start(&htim2);
+      HAL_TIM_Base_Start_IT(&htim2);
       prescCalc(time,currentSet);
       setARR(frequencies,currentSet);
     
