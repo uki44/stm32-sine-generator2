@@ -121,6 +121,8 @@ int main(void)
   status = 0;
   HAL_DAC_Start_DMA(&hdac1, DAC1_CHANNEL_1, (uint32_t *)sin_out, arr_len, DAC_ALIGN_12B_R); // starts the DAC with DMA reading data from sin_out array
 
+  debugI2Cscan(&hi2c1,&huart2);
+
   debug_printf("successful init \r\n");
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1); // vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
@@ -181,7 +183,7 @@ int main(void)
       processState = 2;
     
     }
-    if(processState == 3){
+    if(processState == 3){  // after the cycle has finished we reset the counter and move to the next set of data
       TIM_resetCounder(TIM2);
       currentSet++;
     }
@@ -189,7 +191,7 @@ int main(void)
 
 
 
-    HAL_Delay(100);
+    HAL_Delay(100); // added delay for stability reasons
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

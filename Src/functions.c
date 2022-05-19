@@ -53,24 +53,7 @@ void setARR(float *values, uint8_t n)
 		Error_Handler();
 	}
 }
-float getVoltage(uint8_t *arr, uint8_t n)
-{
 
-	return 0; // added to remove compiler warning, delete later
-}
-
-float getFreq(uint8_t *arr, uint8_t n)
-{
-	float freqn = 0;
-	freqn = buffer1[1];
-	UNUSED(freqn); // added to supress compiler warning, delete later
-	return 10;	   // added to remove compiler warning, delete later
-}
-int getDuration(uint8_t *arr, uint8_t n)
-{
-
-	return 0; // added to remove compiler warning, delete later
-}
 
 float assembleFloat(uint8_t *valArr, uint8_t index)
 {
@@ -171,3 +154,32 @@ void setDigiPot(float* voltageArr, uint8_t digiPotAddr){  //writes the value to 
 
 
 }
+
+void debugI2Cscan(I2C_HandleTypeDef *hi2cx,UART_HandleTypeDef *huartx){
+
+	uint8_t Buffer[25] = {0};
+	uint8_t Space[] = " - ";
+	uint8_t StartMSG[] = "Starting I2C Scanning: \r\n";
+	uint8_t EndMSG[] = "Done! \r\n\r\n";
+	uint8_t ret;
+
+	HAL_UART_Transmit(huartx, StartMSG, sizeof(StartMSG), 10000);
+
+	for(uint8_t i=1; i<128; i++)
+    {
+        ret = HAL_I2C_IsDeviceReady(hi2cx, (uint16_t)(i<<1), 3, 5);
+        if (ret != HAL_OK) /* No ACK Received At That Address */
+        {
+            HAL_UART_Transmit(huartx, Space, sizeof(Space), 10000);
+        }
+        else if(ret == HAL_OK)
+        {
+            sprintf(Buffer, "0x%X", i);
+            HAL_UART_Transmit(huartx, Buffer, sizeof(Buffer), 10000);
+        }
+    }
+	HAL_UART_Transmit(huartx, EndMSG, sizeof(EndMSG), 10000);
+
+	return;
+}
+
