@@ -38,6 +38,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+
+#define EEPROM_ADDR 0x50
+#define DIGIPOT_ADDR 0x2C
+
 uint32_t sin_out[1000];
 uint32_t arr_len = 255;
 uint32_t elapsedTime = 0;

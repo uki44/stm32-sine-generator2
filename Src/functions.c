@@ -182,4 +182,28 @@ void debugI2Cscan(I2C_HandleTypeDef *hi2cx,UART_HandleTypeDef *huartx){
 
 	return;
 }
+void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t EEPROM_ADDR){
+	
+	uint8_t presetArr[256];
+	uint8_t *p_presetArr = presetArr;
 
+	memcpy(p_presetArr, floatArr,sizeof(floatArr));
+	p_presetArr += sizeof(floatArr);
+	memcpy(p_presetArr, voltageArr,sizeof(voltageArr));
+	p_presetArr += sizeof(voltageArr);
+	memcpy(p_presetArr, timeArr,sizeof(timeArr));
+	p_presetArr += sizeof(timeArr);
+
+	writeToEEPROM(hi2cx,presetArr,EEPROM_ADDR);
+	
+	return;	
+
+}
+
+void writeToEEPROM(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t EEPROM_ADDR){
+
+	HAL_I2C_Master_Transmit(hi2cx, EEPROM_ADDR,dataArr,sizeof(dataArr),100);
+
+	return;
+
+}
