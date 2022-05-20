@@ -187,12 +187,12 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	uint8_t presetArr[256];
 	uint8_t *p_presetArr = presetArr;
 
-	memcpy(p_presetArr, floatArr,sizeof(floatArr));
-	p_presetArr += sizeof(floatArr);
-	memcpy(p_presetArr, voltageArr,sizeof(voltageArr));
-	p_presetArr += sizeof(voltageArr);
-	memcpy(p_presetArr, timeArr,sizeof(timeArr));
-	p_presetArr += sizeof(timeArr);
+	memcpy(p_presetArr, floatArr,sizeof(float)*Freq_Len);
+	p_presetArr += (sizeof(float)*Freq_Len);
+	memcpy(p_presetArr, voltageArr,sizeof(float)*Volt_Len);
+	p_presetArr += (sizeof(float)*Freq_Len);
+	memcpy(p_presetArr, timeArr,sizeof(int)*Time_Len);
+	p_presetArr += (sizeof(float)*Freq_Len);
 
 	writeToEEPROM(hi2cx,presetArr,EEPROM_ADDR);
 	
