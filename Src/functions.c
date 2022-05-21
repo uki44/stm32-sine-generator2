@@ -202,7 +202,17 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 
 void writeToEEPROM(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t EEPROM_ADDR){
 
-	HAL_I2C_Master_Transmit(hi2cx, EEPROM_ADDR,dataArr,sizeof(dataArr),100);
+	uint8_t Block_addr = 0x01;
+	uint8_t data[10] = {};
+
+	for(int i = 0; i < 255; i++,Block_addr++){
+
+		data[0] = Block_addr; 
+		data[1] = dataArr[i];
+
+		HAL_I2C_Master_Transmit(hi2cx, EEPROM_ADDR,data,2,50);
+		
+	}
 
 	return;
 
