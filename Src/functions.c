@@ -205,14 +205,56 @@ void writeToEEPROM(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t EEPROM_ADD
 	uint8_t Block_addr = 0x02;
 	uint8_t data[10] = {};
 
-	for(int i = 0; i < 255; i++,Block_addr++){
+/*	for(int i = 0; i < 255; i++,Block_addr++){
 
 		data[0] = Block_addr; 
 		data[1] = dataArr[i];
 
 		HAL_I2C_Master_Transmit(hi2cx, EEPROM_ADDR,data,2,50);
 		
+	}*/
+
+	HAL_I2C_Mem_Write(hi2cx,EEPROM_ADDR,0x02,254,dataArr,256,100);
+
+	return;
+
+}
+void readFromEEPROM(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t EEPROM_ADDR){
+
+	uint8_t Block_addr = 0x02;
+	uint8_t data[10] = {};
+
+	for(int i = 0; i < 255; i++,Block_addr++){
+
+		data[0] = Block_addr; 
+		data[1] = dataArr[i];
+
+		HAL_I2C_Master_Receive(hi2cx, EEPROM_ADDR,data,2,50);
+		
 	}
+
+
+
+
+}
+
+void EEPROMfetchPreset(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t EEPROM_ADDR,float* floatArr, float* voltageArr,int* timeArr){
+
+	uint8_t presetArr[256];
+	uint8_t *p_presetArr;
+
+	p_presetArr = presetArr + 2;
+
+	HAL_I2C_Mem_Read(hi2cx,EEPROM_ADDR,0x00,0xFF,presetArr,256,100);
+
+	memcpy(floatArr, p_presetArr,sizeof(float)*Freq_Len);
+	p_presetArr += (sizeof(float)*Freq_Len);
+	memcpy(voltageArr,p_presetArr ,sizeof(float)*Volt_Len);
+	p_presetArr += (sizeof(float)*Freq_Len);
+	memcpy(timeArr, p_presetArr,sizeof(int)*Time_Len);
+	p_presetArr += (sizeof(float)*Freq_Len);
+	
+	
 
 	return;
 

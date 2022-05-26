@@ -24,3 +24,4 @@ void setDigiPot(float* voltageArr, uint8_t digiPotAddr);
 void debugI2Cscan(I2C_HandleTypeDef *hi2cx,UART_HandleTypeDef *huartx);
 void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t EEPROM_ADDR);
 void writeToEEPROM(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t EEPROM_ADDR);
+void EEPROMfetchPreset(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t EEPROM_ADDR,float* float_Arr, float* voltage_Arr,int* time_Arr);

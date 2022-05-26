@@ -52,6 +52,9 @@ extern float voltages[10] = {0};
 extern int time[10] = {0};
 extern int processState = 0;
 int currentSet = 0;
+
+
+typedef enum states{STATE_INIT, STATE_DATA_SET, STATE_RUN, STATE_NEXT_DATA_SET}state_t;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/

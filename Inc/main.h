@@ -46,6 +46,8 @@ extern int processState;
 #define Freq_Len 10
 #define Volt_Len 10
 #define Time_Len 10
+
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
