@@ -54,7 +54,7 @@ extern int processState = 0;
 int currentSet = 0;
 
 
-typedef enum states{STATE_INIT, STATE_DATA_SET, STATE_RUN, STATE_NEXT_DATA_SET}state_t;
+typedef enum states{STATE_INIT, STATE_DATA_SET, STATE_RUN, STATE_NEXT_DATA_SET,STATE_USE_DATA_EEPROM}state_t;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
