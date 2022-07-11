@@ -31,6 +31,7 @@
 #include "usbd_custom_hid_if.h"
 #include "functions.h"
 #include "string.h"
+#include "ssd1306.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -41,10 +42,13 @@
 
 #define EEPROM_ADDR 0x50
 #define DIGIPOT_ADDR 0x2C
+#define OLED_ADDR 0x3C
 
 uint32_t sin_out[1000];
 uint32_t arr_len = 255;
 uint32_t elapsedTime = 0;
+uint8_t cursor_pos_x = 0;
+uint8_t cursor_pos_y = 0;
 #define PI 3.141592653
 
 extern float frequencies[10] = {0};
@@ -119,6 +123,7 @@ int main(void)
   MX_I2C1_Init();
   MX_SPI1_Init();
   MX_USB_DEVICE_Init();
+  ssd1306_Init();
   /* USER CODE BEGIN 2 */
 
   //HAL_TIM_Base_Start(&htim2);    // tim for delay 32 bit
@@ -133,6 +138,14 @@ int main(void)
   debug_printf("successful init \r\n");
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1); // vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
+  ssd1306_Fill(Black);
+  cursor_pos_y+=2;
+  ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+  ssd1306_WriteString("LF sine generator", Font_6x8, White);
+  cursor_pos_y+=12;
+  ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+  ssd1306_WriteString("By Uros Tomazic", Font_6x8, White);
+  ssd1306_UpdateScreen();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -187,12 +200,15 @@ int main(void)
       prescCalc(time,currentSet);
       setARR(frequencies,currentSet);
       HAL_TIM_Base_Start_IT(&htim2);
+      debug_printf("process started");
       processState = 2;
     
     }
     if(processState == 3){  // after the cycle has finished we reset the counter and move to the next set of data
+      printf("counter reset, using next data");
       TIM_resetCounder(TIM2);
       currentSet++;
+      processState = 1;
     }
 
 
