@@ -28,6 +28,7 @@
 #include "usb_device.h"
 #include "gpio.h"
 #include "stdarg.h"
+#include "stdio.h"
 #include "usbd_custom_hid_if.h"
 #include "functions.h"
 #include "string.h"
@@ -40,15 +41,14 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define EEPROM_ADDR 0x50
-#define DIGIPOT_ADDR 0x2C
-#define OLED_ADDR 0x3C
+
 
 uint32_t sin_out[1000];
 uint32_t arr_len = 255;
 uint32_t elapsedTime = 0;
 uint8_t cursor_pos_x = 0;
 uint8_t cursor_pos_y = 0;
+char msgString[50] = {0};
 #define PI 3.141592653
 
 extern float frequencies[10] = {0};
@@ -58,7 +58,9 @@ extern int processState = 0;
 int currentSet = 0;
 
 
-typedef enum states{STATE_INIT, STATE_DATA_SET, STATE_RUN, STATE_NEXT_DATA_SET,STATE_USE_DATA_EEPROM}state_t;
+
+
+uint8_t dataCurrentState = NO_DATA; 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -178,7 +180,7 @@ int main(void)
 
         printf("process data \r\n");
         processData(frequencies, voltages, time, buffer1, buffer2); //converts data from int to float and writes it to 
-
+        dataCurrentState = RECIEVED_FROM_USB;
 
         /*debug information*/  
         debug_printf("frequencies \r\n");
@@ -195,12 +197,33 @@ int main(void)
       status = 0;
     }
 
-    if(processState == 1){
+    if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB)){
        
       prescCalc(time,currentSet);
       setARR(frequencies,currentSet);
       HAL_TIM_Base_Start_IT(&htim2);
       debug_printf("process started");
+      cursor_pos_x = 2;
+      cursor_pos_y = 0;
+
+      ssd1306_Fill(White);
+      ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+      ssd1306_WriteString("current settings:", Font_6x8, White);
+      cursor_pos_y += 10;
+      ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+      sprintf(msgString,"frequency: %f",frequencies[currentSet]);
+      ssd1306_WriteString(msgString, Font_6x8, White);
+      cursor_pos_y += 10;
+      ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+      sprintf(msgString,"voltage: %f",voltages[currentSet]);
+      ssd1306_WriteString(msgString, Font_6x8, White);
+      sprintf(msgString,"duration: %d",time[currentSet]);
+      ssd1306_WriteString(msgString, Font_6x8, White);
+      cursor_pos_y += 10;
+      ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+      sprintf(msgString,"current data set: %d",currentSet+1);
+      ssd1306_WriteString(msgString, Font_6x8, White);
+      ssd1306_UpdateScreen();
       processState = 2;
     
     }

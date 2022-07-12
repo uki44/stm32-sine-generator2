@@ -47,7 +47,12 @@ extern int processState;
 #define Volt_Len 10
 #define Time_Len 10
 
+#define EEPROM_ADDR 0x50
+#define DIGIPOT_ADDR 0x2C
+#define OLED_ADDR 0x3C
 
+typedef enum states{STATE_INIT, STATE_DATA_SET, STATE_RUN, STATE_NEXT_DATA_SET,STATE_USE_DATA_EEPROM}state_t;
+typedef enum dataState{NO_DATA,RECIEVED_FROM_USB,READ_FROM_MEMORY}data_state_t;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
