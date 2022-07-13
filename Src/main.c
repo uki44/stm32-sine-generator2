@@ -60,6 +60,8 @@ int currentSet = 0;
 
 
 
+
+
 uint8_t dataCurrentState = NO_DATA; 
 /* USER CODE END PTD */
 
@@ -137,6 +139,11 @@ int main(void)
 
   debugI2Cscan(&hi2c1,&huart2);
 
+
+  HAL_TIM_Base_Stop_IT(&htim2);
+  TIM_resetCounder(TIM2);
+
+
   debug_printf("successful init \r\n");
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1); // vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
@@ -196,7 +203,7 @@ int main(void)
    
       status = 0;
     }
-
+   
     if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB) ){
        
       debug_printf("prescaler: %d, time: %d,currentset: %d\r\n",prescCalc(time,currentSet),time[currentSet],currentSet); 
@@ -209,7 +216,7 @@ int main(void)
       cursor_pos_y = 0;
     	writeDataInfoToScreen(msgString,frequencies, voltages,  time, currentSet, cursor_pos_x, cursor_pos_y);
       processState = 2;
-    
+      
     }
     if(processState == 3){  // after the cycle has finished we reset the counter and move to the next set of data
       HAL_TIM_Base_Stop_IT(&htim2);
@@ -336,6 +343,7 @@ void Error_Handler(void)
   {
     debug_printf("error \r\n");
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, 1); // error led 1
+    HAL_Delay(100);
   }
   /* USER CODE END Error_Handler_Debug */
 }
