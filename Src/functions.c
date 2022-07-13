@@ -48,7 +48,7 @@ void setARR(float *values, uint8_t n)
 	if (ARR_Val > 0)
 	{
 		// TIM2->ARR = ARR_Val; // zapiše vrednost v register
-		__HAL_TIM_SET_AUTORELOAD(&htim2, ARR_Val);
+		__HAL_TIM_SET_AUTORELOAD(&htim6, ARR_Val);
 		//__HAL_TIM_SET_COUNTER(&htim2, ARR_Val);
 	}
 	if (ARR_Val <= 0)
@@ -126,11 +126,11 @@ void processData(float *freq_arr, float *voltage_arr, int *time_arr, uint8_t *bu
 int prescCalc(int* time,int index){  
 
 	int prescVal;
-	int TIM_CLK = 32 * pow(10, 6);
-	unsigned long int ARR = pow(2,32) - 1;
+	unsigned long  TIM_CLK = 32 * pow(10, 6);
+	unsigned long  ARR = pow(2,32) - 1;
 
 
-	prescVal= (TIM_CLK*time[index]*60)/ARR;
+	prescVal= round((double)(TIM_CLK*time[index]*60)/ARR);
 
 	return prescVal;
 
@@ -166,7 +166,7 @@ void TIM_setPrescaler(TIM_TypeDef* TIMx,int val){
 
 	
 	/*writes 0 to the counter value*/
-	TIMx->CNT = val;
+	TIMx->PSC = val;
 
 
 }
@@ -287,31 +287,32 @@ void EEPROMfetchPreset(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t eeprom
 	return;
 
 }
-void writeDataInfoToScreen(char* msgString,float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y){
+void writeDataInfoToScreen(char** msgString,float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y){
 
 	ssd1306_Fill(Black);
+	ssd1306_UpdateScreen();
 	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
 	ssd1306_WriteString("current settings:", Font_6x8, White);
 	ssd1306_UpdateScreen();
 	cursor_pos_y += 10;
 	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-	sprintf(msgString,"frequency: %g",frequencies[set]);
-	ssd1306_WriteString(msgString, Font_6x8, White);
+	sprintf(msgString[0],"frequency: %g",frequencies[set]);
+	ssd1306_WriteString(msgString[0], Font_6x8, White);
 	ssd1306_UpdateScreen();
     cursor_pos_y += 10;
 	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-	sprintf(msgString,"voltage: %g",voltages[set]);
-	ssd1306_WriteString(msgString, Font_6x8, White);
+	sprintf(msgString[1],"voltage: %g",voltages[set]);
+	ssd1306_WriteString(msgString[1], Font_6x8, White);
 	ssd1306_UpdateScreen();
 	cursor_pos_y += 10;
 	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-	sprintf(msgString,"duration: %d",time[set]);
-	ssd1306_WriteString(msgString, Font_6x8, White);
+	sprintf(msgString[2],"duration: %d",time[set]);
+	ssd1306_WriteString(msgString[2], Font_6x8, White);
 	ssd1306_UpdateScreen();
 	cursor_pos_y += 10;
 	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-	sprintf(msgString,"current data set: %d",set+1);
-	ssd1306_WriteString(msgString, Font_6x8, White);
+	sprintf(msgString[3],"current data set: %d",set+1);
+	ssd1306_WriteString(msgString[3], Font_6x8, White);
 	ssd1306_UpdateScreen();
 }
 

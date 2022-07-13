@@ -26,4 +26,4 @@ void debugI2Cscan(I2C_HandleTypeDef *hi2cx,UART_HandleTypeDef *huartx);
 void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t eeprom_addr);
 void writeToEEPROM(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t eeprom_addr);
 void EEPROMfetchPreset(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t eeprom_addr,float* float_Arr, float* voltage_Arr,int* time_Arr);
-void writeDataInfoToScreen(char* msgString,float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y);
+void writeDataInfoToScreen(char** msgString,float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y);

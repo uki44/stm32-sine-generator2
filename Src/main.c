@@ -48,7 +48,7 @@ uint32_t arr_len = 255;
 uint32_t elapsedTime = 0;
 uint8_t cursor_pos_x = 0;
 uint8_t cursor_pos_y = 0;
-char msgString[50] = {0};
+char msgString[4][50] = {0};
 #define PI 3.141592653
 
 extern float frequencies[10] = {0};
@@ -199,8 +199,10 @@ int main(void)
 
     if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB) ){
        
+      debug_printf("prescaler: %d, time: %d,currentset: %d\r\n",prescCalc(time,currentSet),time[currentSet],currentSet); 
       TIM_setPrescaler(TIM2,prescCalc(time,currentSet));
       setARR(frequencies,currentSet);
+      debug_printf("prescaler: %d, time: %d,currentset: %d, read prescaler: %u, read ARR: %u\r\n",prescCalc(time,currentSet),time[currentSet],currentSet, TIM2->PSC,TIM2->ARR);
       HAL_TIM_Base_Start_IT(&htim2);
       debug_printf("process started \r\n");
       cursor_pos_x = 2; 
@@ -302,7 +304,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim == &htim2)
   {
-
+    debug_printf("timer interrupt\r\n");
     processState = 3;
     
   }
