@@ -181,7 +181,7 @@ int main(void)
         printf("process data \r\n");
         processData(frequencies, voltages, time, buffer1, buffer2); //converts data from int to float and writes it to 
         dataCurrentState = RECIEVED_FROM_USB;
-
+        processState = 0;
         /*debug information*/  
         debug_printf("frequencies \r\n");
         for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)frequencies[i]);}
@@ -199,35 +199,18 @@ int main(void)
 
     if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB) ){
        
-      prescCalc(time,currentSet);
+      TIM_setPrescaler(TIM2,prescCalc(time,currentSet));
       setARR(frequencies,currentSet);
       HAL_TIM_Base_Start_IT(&htim2);
-      debug_printf("process started");
-      cursor_pos_x = 2;
+      debug_printf("process started \r\n");
+      cursor_pos_x = 2; 
       cursor_pos_y = 0;
-
-      ssd1306_Fill(Black);
-      ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-      ssd1306_WriteString("current settings:", Font_6x8, White);
-      cursor_pos_y += 10;
-      ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-      sprintf(msgString,"frequency: %f",frequencies[currentSet]);
-      ssd1306_WriteString(msgString, Font_6x8, White);
-      cursor_pos_y += 10;
-      ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-      sprintf(msgString,"voltage: %f",voltages[currentSet]);
-      ssd1306_WriteString(msgString, Font_6x8, White);
-      sprintf(msgString,"duration: %d",time[currentSet]);
-      ssd1306_WriteString(msgString, Font_6x8, White);
-      cursor_pos_y += 10;
-      ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-      sprintf(msgString,"current data set: %d",currentSet+1);
-      ssd1306_WriteString(msgString, Font_6x8, White);
-      ssd1306_UpdateScreen();
+    	writeDataInfoToScreen(msgString,frequencies, voltages,  time, currentSet, cursor_pos_x, cursor_pos_y);
       processState = 2;
     
     }
     if(processState == 3){  // after the cycle has finished we reset the counter and move to the next set of data
+      HAL_TIM_Base_Stop_IT(&htim2);
       printf("counter reset, using next data");
       TIM_resetCounder(TIM2);
       currentSet++;
@@ -328,7 +311,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
   if(GPIO_Pin == GPIO_PIN_13){
     debug_printf("button pressed\r\n");
-    if(processState != 2){
+    if(processState != 3||processState != 2 || dataCurrentState != NO_DATA){
       
       processState = 1;
     

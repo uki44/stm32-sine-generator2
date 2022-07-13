@@ -6,6 +6,7 @@
 #include "math.h"
 #include "usbd_custom_hid_if.h"
 #include "string.h"
+#include "ssd1306.h"
 
 void calcsin(uint32_t *sin_arr, uint8_t V)  //init function that creates the array with precalculated values for the sine-wave
 {
@@ -157,6 +158,18 @@ void TIM_resetCounder(TIM_TypeDef* TIMx){
 
 
 }
+void TIM_setPrescaler(TIM_TypeDef* TIMx,int val){
+
+	
+	/*checks if the parameters are valid*/
+	assert_param(IS_TIM_ALL_PERIPH(TIMx));
+
+	
+	/*writes 0 to the counter value*/
+	TIMx->CNT = val;
+
+
+}
 void setDigiPot(float* voltageArr, uint8_t digiPotAddr){  //writes the value to the I2C digital potentiometer 
 
 
@@ -274,3 +287,31 @@ void EEPROMfetchPreset(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t eeprom
 	return;
 
 }
+void writeDataInfoToScreen(char* msgString,float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y){
+
+	ssd1306_Fill(Black);
+	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+	ssd1306_WriteString("current settings:", Font_6x8, White);
+	ssd1306_UpdateScreen();
+	cursor_pos_y += 10;
+	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+	sprintf(msgString,"frequency: %g",frequencies[set]);
+	ssd1306_WriteString(msgString, Font_6x8, White);
+	ssd1306_UpdateScreen();
+    cursor_pos_y += 10;
+	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+	sprintf(msgString,"voltage: %g",voltages[set]);
+	ssd1306_WriteString(msgString, Font_6x8, White);
+	ssd1306_UpdateScreen();
+	cursor_pos_y += 10;
+	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+	sprintf(msgString,"duration: %d",time[set]);
+	ssd1306_WriteString(msgString, Font_6x8, White);
+	ssd1306_UpdateScreen();
+	cursor_pos_y += 10;
+	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
+	sprintf(msgString,"current data set: %d",set+1);
+	ssd1306_WriteString(msgString, Font_6x8, White);
+	ssd1306_UpdateScreen();
+}
+
