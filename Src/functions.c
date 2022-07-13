@@ -132,7 +132,7 @@ int prescCalc(int* time,int index){
 
 	prescVal= round((double)(TIM_CLK*time[index]*60)/ARR);
 
-	return prescVal;
+	return prescVal + 1;
 
 }
 uint32_t TIM_GetCounter(TIM_TypeDef* TIMx){
@@ -287,7 +287,7 @@ void EEPROMfetchPreset(I2C_HandleTypeDef *hi2cx,uint8_t *dataArr,uint16_t eeprom
 	return;
 
 }
-void writeDataInfoToScreen(char** msgString,float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y){
+void writeDataInfoToScreen(char msgString[4][50],float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y){
 
 	ssd1306_Fill(Black);
 	ssd1306_UpdateScreen();
@@ -296,12 +296,12 @@ void writeDataInfoToScreen(char** msgString,float*  float_arr,float* voltage_arr
 	ssd1306_UpdateScreen();
 	cursor_pos_y += 10;
 	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-	sprintf(msgString[0],"frequency: %g",frequencies[set]);
+	sprintf(msgString[0],"frequency: %d",(int)frequencies[set]); // %g ali %f ne dela
 	ssd1306_WriteString(msgString[0], Font_6x8, White);
 	ssd1306_UpdateScreen();
     cursor_pos_y += 10;
 	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-	sprintf(msgString[1],"voltage: %g",voltages[set]);
+	sprintf(msgString[1],"voltage: %d",(int)voltages[set]);
 	ssd1306_WriteString(msgString[1], Font_6x8, White);
 	ssd1306_UpdateScreen();
 	cursor_pos_y += 10;
