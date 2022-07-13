@@ -197,7 +197,7 @@ int main(void)
       status = 0;
     }
 
-    if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB)){
+    if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB) ){
        
       prescCalc(time,currentSet);
       setARR(frequencies,currentSet);
@@ -206,7 +206,7 @@ int main(void)
       cursor_pos_x = 2;
       cursor_pos_y = 0;
 
-      ssd1306_Fill(White);
+      ssd1306_Fill(Black);
       ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
       ssd1306_WriteString("current settings:", Font_6x8, White);
       cursor_pos_y += 10;
@@ -235,6 +235,7 @@ int main(void)
     }
 
 
+    
 
 
     HAL_Delay(100); // added delay for stability reasons
@@ -326,7 +327,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
   if(GPIO_Pin == GPIO_PIN_13){
-
+    debug_printf("button pressed\r\n");
     if(processState != 2){
       
       processState = 1;
