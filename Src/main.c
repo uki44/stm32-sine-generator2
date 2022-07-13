@@ -56,7 +56,7 @@ extern float voltages[10] = {0};
 extern int time[10] = {0};
 extern int processState = 0;
 int currentSet = 0;
-
+uint32_t curtime = 0,curtime2 = 0;
 
 
 
@@ -139,10 +139,7 @@ int main(void)
 
   debugI2Cscan(&hi2c1,&huart2);
 
-
-  HAL_TIM_Base_Stop_IT(&htim2);
-  TIM_resetCounder(TIM2);
-
+ 
 
   debug_printf("successful init \r\n");
 
@@ -200,36 +197,44 @@ int main(void)
 
 
       }  
+
    
       status = 0;
     }
    
     if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB) ){
-       
-      debug_printf("prescaler: %d, time: %d,currentset: %d\r\n",prescCalc(time,currentSet),time[currentSet],currentSet); 
-      TIM_setPrescaler(TIM2,prescCalc(time,currentSet));
-      setARR(frequencies,currentSet);
-      debug_printf("prescaler: %d, time: %d,currentset: %d, read prescaler: %u, read ARR: %u\r\n",prescCalc(time,currentSet),time[currentSet],currentSet, TIM2->PSC,TIM2->ARR);
-      HAL_TIM_Base_Start_IT(&htim2);
-      debug_printf("process started \r\n");
+             
+      setARR(frequencies,currentSet);  
       cursor_pos_x = 2; 
       cursor_pos_y = 0;
     	writeDataInfoToScreen(msgString,frequencies, voltages,  time, currentSet, cursor_pos_x, cursor_pos_y);
       processState = 2;
+      curtime = HAL_GetTick();
+      
       
     }
-    if(processState == 3){  // after the cycle has finished we reset the counter and move to the next set of data
-      HAL_TIM_Base_Stop_IT(&htim2);
-      printf("counter reset, using next data");
-      TIM_resetCounder(TIM2);
+
+    if((HAL_GetTick() > ((time[currentSet]*60*1000) + curtime)) && processState == 2){ //time[currentSet]*60*1000000
+      
+      processState = 1; 
       currentSet++;
-      processState = 1;
-    }
+      debug_printf("current set finished, moving on to the next one \r\n");    
+
+      }
+
+      if(currentSet >= 10 && processState != 100){
+        processState = 100;
+        ssd1306_Fill(Black);
+	      ssd1306_UpdateScreen();
+        ssd1306_SetCursor(0,32);
+	      ssd1306_WriteString("process finished", Font_6x8, White);
+	      ssd1306_UpdateScreen();
+
+      }
 
 
-    
 
-
+    curtime2 = HAL_GetTick();
     HAL_Delay(100); // added delay for stability reasons
     /* USER CODE END WHILE */
 
@@ -312,7 +317,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim == &htim2)
   {
     debug_printf("timer interrupt\r\n");
-    processState = 3;
+    //processState = 3;
     
   }
 }
@@ -320,7 +325,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
   if(GPIO_Pin == GPIO_PIN_13){
     debug_printf("button pressed\r\n");
-    if(processState != 3||processState != 2 || dataCurrentState != NO_DATA){
+    if(processState != 2 && dataCurrentState != NO_DATA ){
       
       processState = 1;
     
