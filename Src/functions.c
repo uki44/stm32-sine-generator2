@@ -170,9 +170,25 @@ void TIM_setPrescaler(TIM_TypeDef* TIMx,int val){
 
 
 }
-void setDigiPot(float* voltageArr, uint8_t digiPotAddr){  //writes the value to the I2C digital potentiometer 
+void setDigiPot(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr){  //writes the value to the I2C digital potentiometer //using non inverting amplifier
+
+	float dac_max_voltage = 3.3;
+	float A, R1;
+	uint32_t R2;
+	uint8_t trainsmitArr[5] = {0};
+
+	A = voltage/dac_max_voltage;
+
+	R2 = R1*(A-1);
+
+	debug_printf("R2: %d", R2);
 
 
+	trainsmitArr[0] = 0;
+	trainsmitArr[1] = R2;
+	
+	HAL_I2C_Master_Transmit(I2C,digiPotAddr  << 1,trainsmitArr,2,100);
+	
 
 }
 /*this function scans the i2c bus for devices and prints their addresses to the serial console, it is used to check if all 3 i2c devices are connected and functioning*/
