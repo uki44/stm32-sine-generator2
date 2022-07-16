@@ -139,19 +139,15 @@ int main(void)
 
   debugI2Cscan(&hi2c1,&huart2);
 
+  displayInitData();
+  initDigiPot(&hi2c1,DIGIPOT_ADDR << 1);
  
 
   debug_printf("successful init \r\n");
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1); // vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
-  ssd1306_Fill(Black);
-  cursor_pos_y+=2;
-  ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-  ssd1306_WriteString("LF sine generator", Font_6x8, White);
-  cursor_pos_y+=12;
-  ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-  ssd1306_WriteString("By Uros Tomazic", Font_6x8, White);
-  ssd1306_UpdateScreen();
+  
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -194,8 +190,11 @@ int main(void)
         debug_printf("time \r\n");
         for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)time[i]);}
     
-
-
+          ssd1306_SetCursor(0,32);
+          ssd1306_WriteString("Data recieved from:",Font_6x8,White);
+          ssd1306_SetCursor(0,42);
+          ssd1306_WriteString("usb",Font_6x8,White);
+          ssd1306_UpdateScreen();
       }  
 
    

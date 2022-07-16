@@ -336,4 +336,30 @@ void writeDataInfoToScreen(char msgString[4][50],float*  float_arr,float* voltag
 	ssd1306_WriteString(msgString[3], Font_6x8, White);
 	ssd1306_UpdateScreen();
 }
+void displayInitData(){
+	uint8_t x_pos = 0, y_pos = 0;
 
+	y_pos +=2;
+
+	ssd1306_Fill(Black);
+  	ssd1306_SetCursor(x_pos,y_pos);
+  	ssd1306_WriteString("LF sine generator", Font_6x8, White);
+  	y_pos+=12;
+  	ssd1306_SetCursor(x_pos,y_pos);
+  	ssd1306_WriteString("By Uros Tomazic", Font_6x8, White);
+  	ssd1306_UpdateScreen();
+
+
+}
+
+void initDigiPot(I2C_HandleTypeDef* i2cx,uint8_t device_addr){
+
+	uint8_t data_arr[4] = {0};
+
+	data_arr[0] = 0;
+	data_arr[1] = 0x40;  //sets the digipot to 10kR (max value) so we get a gain of 1 at the output
+
+
+	HAL_I2C_Master_Transmit(i2cx,device_addr,data_arr,2,100);
+	
+}
