@@ -204,7 +204,8 @@ int main(void)
    
     if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB) ){
              
-      setARR(frequencies,currentSet);  
+      setARR(frequencies,currentSet);
+      setDigiPot(&hi2c1,voltages[currentSet],DIGIPOT_ADDR);  
       cursor_pos_x = 2; 
       cursor_pos_y = 0;
     	writeDataInfoToScreen(msgString,frequencies, voltages,  time, currentSet, cursor_pos_x, cursor_pos_y);
