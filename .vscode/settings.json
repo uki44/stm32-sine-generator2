@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "stm32l4xx_hal.h": "c"
+        "stm32l4xx_hal.h": "c",
+        "STM32L4XX_HAL_I2C.H": "cpp"
     }
 }

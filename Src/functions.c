@@ -418,7 +418,7 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 			arr[currentPos] = tempArr[j];
 
 		}
-		next = currentPos + sizeof(float);
+		next = currentPos + 4;
 	}
 	for(int i = 0; i < 10; i++){
 		
@@ -428,7 +428,7 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 			arr[currentPos] = tempArr[j];
 
 		}
-		next = currentPos + sizeof(float);
+		next = currentPos + 4;
 	}
 		for(int i = 0; i < 10; i++){
 		
@@ -438,41 +438,98 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 			arr[currentPos] = tempArr[j];
 
 		}
-		next = currentPos + sizeof(int);
+		next = currentPos + 4;
 	}	
 
 	debug_printf("data write to eeprom: \r\n");
 	debug_print_array(arr,128);
-	EEPROM_Write(hi2cx,eeprom_addr, 2, 0, arr, 128);
-
+	HAL_Delay(10);
+	writeToFlash(arr);
 }
 
 void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t eeprom_addr){
 
 	uint8_t arr[128] = {0};
 	uint8_t currentIndex = 0;
+
+
+	//EEPROM_Read(hi2cx,eeprom_addr,8, 0, arr, 128);
+
+	readFromFlash(arr);
+
 	debug_printf("read array from eeprom: \r\n");
 	debug_print_array(arr,128);
 
-	EEPROM_Read(hi2cx,eeprom_addr,2, 0, arr, 128);
-
-	for(int i = 0;i < 10; i++,currentIndex += 4){
+	for(int i = 0;i < 10; i++){
 
 		floatArr[i] = assembleFloat(arr,currentIndex);
+		currentIndex +=4;
 		
 	}
-	for(int i = 0; i < 10; i++,currentIndex += 4){
+	for(int i = 0; i < 10; i++){
 
 
 		voltageArr[i] = assembleFloat(arr,currentIndex);
+		currentIndex +=4;
 
 	}
-	for(int i = 0; i < 10; i++,currentIndex += 4){
+	for(int i = 0; i < 10; i++){
 
 		timeArr[i] = assembleInt(arr,currentIndex);
+		currentIndex +=4;
 
 	}
-	
+	   debug_printf("frequencies \r\n");
+        for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)frequencies[i]);}
+        debug_printf("voltages \r\n");
+        for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)voltages[i]);}
+        debug_printf("time \r\n");
+        for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)time[i]);}
 
 }
+
+void writeToFlash(uint8_t* arr){
+
+	uint32_t pageAddress = 0x0803F800;
+	uint64_t data[16] = {0};
+
+	memcpy(data,arr,128);
+
+	HAL_FLASH_Unlock();
+	
+
+	for(int i = 0; i < 16; i++ ,pageAddress+=8){
+		
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,pageAddress,data[i]);
+		
+	}
+
+	HAL_FLASH_Lock();
+
+
+
+
+}
+
+void readFromFlash(uint8_t* arr){
+
+	uint32_t pageAddress = 0x0803F800;
+	uint64_t dataArr[16]= {0};	
+	HAL_FLASH_Unlock();
+
+	for(int i = 0; i < 16; i++,pageAddress+=8){
+
+		dataArr[i] = *(__IO uint32_t *)pageAddress;
+
+	}
+
+	HAL_FLASH_Lock();
+
+	memcpy(arr,dataArr,128);
+
+
+
+	
+}
+
 

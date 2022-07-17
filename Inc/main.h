@@ -47,8 +47,8 @@ extern int processState;
 #define Volt_Len 10
 #define Time_Len 10
 
-#define EEPROM_ADDR 0x50
-#define DIGIPOT_ADDR 0x2C
+#define EEPROM_ADDR 0xA0
+#define DIGIPOT_ADDR 0x2C << 1
 #define OLED_ADDR 0x3C
 
 #define PAGE_NUM 16  //number of pages on the eeprom chip
