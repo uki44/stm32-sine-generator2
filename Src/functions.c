@@ -204,7 +204,7 @@ void setDigiPot(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr){  //w
 
 	wiperPos = R1*(digipotResolution/digipotR);
 
-	debug_printf("R2: %d", R1);
+	debug_printf("R1: %d \r\n", R1);
 
 
 	trainsmitArr[0] = 0;
@@ -301,7 +301,7 @@ void initDigiPot(I2C_HandleTypeDef* i2cx,uint8_t device_addr){
 	
 }
 
-void EEPROM_Write (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
+void EEPROM_Write (I2C_HandleTypeDef* i2cx,uint16_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
 
 	int paddrposition = log(PAGE_SIZE)/log(2);
 
@@ -330,14 +330,14 @@ void EEPROM_Write (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, ui
 
 }
 
-void EEPROM_Read (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
+void EEPROM_Read (I2C_HandleTypeDef* i2cx,uint16_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
 
 		int paddrposition = log(PAGE_SIZE)/log(2);
 
 		uint16_t startPage = page;
 		uint16_t endPage = page + ((size+offset)/PAGE_SIZE);
 
-		uint16_t numofpages = (endPage-startPage) + 1;
+		uint16_t numofpages = (endPage-startPage)+1;
 		uint16_t pos=0;
 
 		for (int i=0; i<numofpages; i++){
@@ -407,6 +407,9 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	uint8_t currentPos = 0;
 	uint8_t next = currentPos + 4;
 	
+	
+
+
 	for(int i = 0; i < 10; i++){
 		
 		split_data_float(tempArr,floatArr[i]);
@@ -438,8 +441,9 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 		next = currentPos + sizeof(int);
 	}	
 
-
-	EEPROM_Write (hi2cx,eeprom_addr, 1, 0, arr, 128);
+	debug_printf("data write to eeprom: \r\n");
+	debug_print_array(arr,128);
+	EEPROM_Write (hi2cx,eeprom_addr, 0, 0, arr, 128);
 
 }
 
@@ -447,8 +451,10 @@ void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 
 	uint8_t arr[128] = {0};
 	uint8_t currentIndex = 0;
+	debug_printf("read array from eeprom: \r\n");
+	debug_print_array(arr,128);
 
-	EEPROM_Read (hi2cx,eeprom_addr,1, 0, arr, 8);
+	EEPROM_Read(hi2cx,eeprom_addr,0, 0, arr, 128);
 
 	for(int i = 0;i < 10; i++,currentIndex += 4){
 

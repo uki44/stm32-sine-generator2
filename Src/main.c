@@ -57,6 +57,7 @@ extern int time[10] = {0};
 extern int processState = 0;
 int currentSet = 0;
 uint32_t curtime = 0,curtime2 = 0;
+uint8_t btn_guard = 0;
 
 
 
@@ -140,13 +141,14 @@ int main(void)
   debugI2Cscan(&hi2c1,&huart2);
 
   displayInitData();
-  initDigiPot(&hi2c1,DIGIPOT_ADDR << 1);
- 
+  initDigiPot(&hi2c1,DIGIPOT_ADDR);
+  
 
   debug_printf("successful init \r\n");
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1); // vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
   
+  //readPreset(frequencies,voltages,time,&hi2c1,EEPROM_ADDR);
 
   /* USER CODE END 2 */
 
@@ -195,14 +197,26 @@ int main(void)
           ssd1306_SetCursor(0,42);
           ssd1306_WriteString("usb",Font_6x8,White);
           ssd1306_UpdateScreen();
+
+          if(buffer2[62] == 1){
+
+            savePreset(frequencies,voltages,time,&hi2c1,EEPROM_ADDR);
+
+            ssd1306_SetCursor(0,54);
+            ssd1306_WriteString("written to eeprom",Font_6x8,White);
+            ssd1306_UpdateScreen();
+
+          }
       }  
 
    
       status = 0;
     }
    
-    if(processState == 1 && (dataCurrentState == READ_FROM_MEMORY || dataCurrentState == RECIEVED_FROM_USB) ){
-             
+    if(processState == 1 ){
+
+      if(dataCurrentState != RECIEVED_FROM_USB &&  btn_guard == 1){readPreset(frequencies,voltages,time,&hi2c1,EEPROM_ADDR); btn_guard = 2;}   
+
       setARR(frequencies,currentSet);
       setDigiPot(&hi2c1,voltages[currentSet],DIGIPOT_ADDR);  
       cursor_pos_x = 2; 
@@ -325,9 +339,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
   if(GPIO_Pin == GPIO_PIN_13){
     debug_printf("button pressed\r\n");
-    if(processState != 2 && dataCurrentState != NO_DATA ){
+    if(processState != 2 && btn_guard != 1 && btn_guard != 2){
       
       processState = 1;
+      btn_guard = 1;
     
     }
   }
