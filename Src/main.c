@@ -63,6 +63,8 @@ uint8_t btn_guard = 0;
 
 
 
+
+
 uint8_t dataCurrentState = NO_DATA; 
 /* USER CODE END PTD */
 
@@ -145,10 +147,12 @@ int main(void)
   
 
   debug_printf("successful init \r\n");
+  
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, 1); // vgrajena zelena ledica na plošči, sporoči uspešno inicializacijo
   
-  //readPreset(frequencies,voltages,time,&hi2c1,EEPROM_ADDR);
+
+  
 
   /* USER CODE END 2 */
 

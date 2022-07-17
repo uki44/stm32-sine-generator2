@@ -28,8 +28,8 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 void writeDataInfoToScreen(char msgString[4][50],float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y);
 void displayInitData();
 void initDigiPot(I2C_HandleTypeDef* i2cx,uint8_t device_addr);
-void EEPROM_Write (I2C_HandleTypeDef* i2cx,uint16_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size);
-void EEPROM_Read (I2C_HandleTypeDef* i2cx,uint16_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size);
+void EEPROM_Write(I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size);
+void EEPROM_Read(I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size);
 void EEPROM_PageErase (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page);
 uint16_t bytestowrite (uint16_t size, uint16_t offset);
 void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t eeprom_addr);

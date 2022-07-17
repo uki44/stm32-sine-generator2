@@ -301,7 +301,7 @@ void initDigiPot(I2C_HandleTypeDef* i2cx,uint8_t device_addr){
 	
 }
 
-void EEPROM_Write (I2C_HandleTypeDef* i2cx,uint16_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
+void EEPROM_Write(I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
 
 	int paddrposition = log(PAGE_SIZE)/log(2);
 
@@ -330,7 +330,7 @@ void EEPROM_Write (I2C_HandleTypeDef* i2cx,uint16_t eeprom_addr,uint16_t page, u
 
 }
 
-void EEPROM_Read (I2C_HandleTypeDef* i2cx,uint16_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
+void EEPROM_Read (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
 
 		int paddrposition = log(PAGE_SIZE)/log(2);
 
@@ -363,7 +363,7 @@ void EEPROM_PageErase (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page
 
 		uint8_t data[PAGE_SIZE];
 		memset(data,0xff,PAGE_SIZE);
-		HAL_I2C_Mem_Write(i2cx, EEPROM_ADDR, MemAddress, 2, data, PAGE_SIZE, 1000);
+		HAL_I2C_Mem_Write(i2cx,eeprom_addr, MemAddress, 2, data, PAGE_SIZE, 1000);
 
 		HAL_Delay (5);
 
@@ -443,7 +443,7 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 
 	debug_printf("data write to eeprom: \r\n");
 	debug_print_array(arr,128);
-	EEPROM_Write (hi2cx,eeprom_addr, 0, 0, arr, 128);
+	EEPROM_Write(hi2cx,eeprom_addr, 2, 0, arr, 128);
 
 }
 
@@ -454,7 +454,7 @@ void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	debug_printf("read array from eeprom: \r\n");
 	debug_print_array(arr,128);
 
-	EEPROM_Read(hi2cx,eeprom_addr,0, 0, arr, 128);
+	EEPROM_Read(hi2cx,eeprom_addr,2, 0, arr, 128);
 
 	for(int i = 0;i < 10; i++,currentIndex += 4){
 
@@ -475,3 +475,4 @@ void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	
 
 }
+
