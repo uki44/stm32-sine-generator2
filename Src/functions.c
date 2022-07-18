@@ -490,23 +490,27 @@ void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 
 void writeToFlash(uint8_t* arr){
 
+
+
 	uint32_t pageAddress = 0x0803F800;
 	uint64_t data[16] = {0};
 
-	memcpy(data,arr,128);
+	memcpy((uint8_t*)data,(uint8_t*) arr,128);
 
 	HAL_FLASH_Unlock();
 	
+	
+	for(int i = 0; i < 16; i++ ){
 
-	for(int i = 0; i < 16; i++ ,pageAddress+=8){
-		
+			
+				
 		HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,pageAddress,data[i]);
+		
+		pageAddress+=8;
 		
 	}
 
 	HAL_FLASH_Lock();
-
-
 
 
 }
@@ -525,7 +529,7 @@ void readFromFlash(uint8_t* arr){
 
 	HAL_FLASH_Lock();
 
-	memcpy(arr,dataArr,128);
+	memcpy((uint8_t*)arr,(uint8_t*)dataArr,128);
 
 
 
