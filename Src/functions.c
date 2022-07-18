@@ -45,13 +45,13 @@ void setARR(float *values, uint8_t n)
 
 	ARR_Val = ARR_Cal(freq);
 
-	if (ARR_Val > 0)
+	if (ARR_Val > 0) // if the value is above 0 it is safe to write to the arr register
 	{
 		// TIM2->ARR = ARR_Val; // zapiše vrednost v register
 		__HAL_TIM_SET_AUTORELOAD(&htim6, ARR_Val);
 		//__HAL_TIM_SET_COUNTER(&htim2, ARR_Val);
 	}
-	if (ARR_Val <= 0)
+	if (ARR_Val <= 0)  // if ARR value is below 0 it was not calculated with the right data and could cause errors if written to the ARR register
 	{
 
 		Error_Handler();
@@ -77,6 +77,7 @@ float assembleFloat(uint8_t *valArr, uint8_t index)
 
 	return retVal;
 }
+/* assembleInt function will combine one integer from 4 uint8_t values (this is basically an unsigned char) */
 int assembleInt(uint8_t *valArr,uint8_t index){
 
 	uint8_t tempArr[4];
@@ -96,7 +97,7 @@ int assembleInt(uint8_t *valArr,uint8_t index){
 
 
 }
-void debug_print_array(uint8_t *arr, int size) //prints the whole array using one function, is necesairy for debugging purposes
+void debug_print_array(uint8_t *arr, int size) //prints the whole array using one function,makes debugging easier
 {
 
 	for (int i = 0; i < size; i++)
@@ -153,24 +154,24 @@ int prescCalc(int* time,int index){
 	return prescVal + 1;
 
 }
+
+
 uint32_t TIM_GetCounter(TIM_TypeDef* TIMx){
 
-	/* preveri če so parametri pravilni*/
+	
 	/*checks if the parameters are valid*/
 	assert_param(IS_TIM_ALL_PERIPH(TIMx)); 
 
-	/*vrne trenutno vrednost števca*/
 	/*returns current counter state*/
 	return TIMx->CNT;
 
 }
 void TIM_resetCounder(TIM_TypeDef* TIMx){
 
-	/* preveri če so parametri pravilni*/
+	
 	/*checks if the parameters are valid*/
 	assert_param(IS_TIM_ALL_PERIPH(TIMx));
 
-	/*zapiše vrednost 0 v števec*/
 	/*writes 0 to the counter value*/
 	TIMx->CNT = 0;
 
@@ -183,26 +184,27 @@ void TIM_setPrescaler(TIM_TypeDef* TIMx,int val){
 	assert_param(IS_TIM_ALL_PERIPH(TIMx));
 
 	
-	/*writes 0 to the counter value*/
+	/*writes prescaler value*/
 	TIMx->PSC = val;
 
 
 }
+
+
 void setDigiPot(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr){  //writes the value to the I2C digital potentiometer //using non inverting amplifier
 
-	float dac_max_voltage = 3.3;
+	float dac_max_voltage = 3.3; // maximum voltage that the digital to analog converter can output
 	float A, R1,R2 = 10000;
-	uint8_t digipotResolution = 64;
-	uint32_t  digipotR = 10000;
-	//double step = 156.25;
-	uint8_t trainsmitArr[5] = {0};
+	uint8_t digipotResolution = 64; // resolution of the digital potentiometer 
+	uint32_t  digipotR = 10000;  // whole resistance of the digital potentiometer
+	uint8_t trainsmitArr[5] = {0}; 
 	uint8_t wiperPos;
 
-	A = voltage/dac_max_voltage;
+	A = voltage/dac_max_voltage; // gain caluclation
 
-	R1 = R2/(A-1);
+	R1 = R2/(A-1); // calculate the resistance we need to set the digipot to
 
-	wiperPos = R1*(digipotResolution/digipotR);
+	wiperPos = R1*(digipotResolution/digipotR); // calculate to which position we need to set the internal wiper of the digipot
 
 	debug_printf("R1: %d \r\n", R1);
 
@@ -210,7 +212,7 @@ void setDigiPot(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr){  //w
 	trainsmitArr[0] = 0;
 	trainsmitArr[1] = wiperPos;
 	
-	HAL_I2C_Master_Transmit(I2C,digiPotAddr  << 1,trainsmitArr,2,100);
+	HAL_I2C_Master_Transmit(I2C,digiPotAddr  << 1,trainsmitArr,2,100); //writes the calculated wiperpos to the digipot via I2C
 	
 
 }
@@ -244,7 +246,8 @@ void debugI2Cscan(I2C_HandleTypeDef *hi2cx,UART_HandleTypeDef *huartx){
 }
 
 
-
+/* write current settings that the generator is using to produce the sine wave, where frequency is the frequency of the sine wave, 
+voltage is the peak voltage of the sine wave and time is the duraton untill we switch to the next set of data*/
 void writeDataInfoToScreen(char msgString[4][50],float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y){
 
 	ssd1306_Fill(Black);
@@ -254,7 +257,7 @@ void writeDataInfoToScreen(char msgString[4][50],float*  float_arr,float* voltag
 	ssd1306_UpdateScreen();
 	cursor_pos_y += 10;
 	ssd1306_SetCursor(cursor_pos_x,cursor_pos_y);
-	sprintf(msgString[0],"frequency: %d",(int)frequencies[set]); // %g ali %f ne dela
+	sprintf(msgString[0],"frequency: %d",(int)frequencies[set]); // %g or %f doesn't work yet, so we just display the value without decimals for now
 	ssd1306_WriteString(msgString[0], Font_6x8, White);
 	ssd1306_UpdateScreen();
     cursor_pos_y += 10;
@@ -273,6 +276,8 @@ void writeDataInfoToScreen(char msgString[4][50],float*  float_arr,float* voltag
 	ssd1306_WriteString(msgString[3], Font_6x8, White);
 	ssd1306_UpdateScreen();
 }
+
+/* writes the name of the device and author to the OLED screen so it's not blank before we start generating the sine wave*/
 void displayInitData(){
 	uint8_t x_pos = 0, y_pos = 0;
 
@@ -288,7 +293,7 @@ void displayInitData(){
 
 
 }
-
+/* sets the resistance of the digipot to 10kR so we get a gain of 1 or 3.3V at the output*/
 void initDigiPot(I2C_HandleTypeDef* i2cx,uint8_t device_addr){
 
 	uint8_t data_arr[4] = {0};
@@ -300,6 +305,8 @@ void initDigiPot(I2C_HandleTypeDef* i2cx,uint8_t device_addr){
 	HAL_I2C_Master_Transmit(i2cx,device_addr,data_arr,2,100);
 	
 }
+
+/* function to write provided data array to the attached I2C EEPROM chip, as of now there is a bug somewhere which doesn't allow writing or possibly reading to/from the ic*/
 
 void EEPROM_Write(I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
 
@@ -369,12 +376,14 @@ void EEPROM_PageErase (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page
 
 
 }
-uint16_t bytestowrite (uint16_t size, uint16_t offset)
+uint16_t bytestowrite (uint16_t size, uint16_t offset) /*sub function to  EERPOM write, which is used to calculate how many bytes we still need to write to the EEPROM*/
 {
 	if ((size+offset)<PAGE_SIZE) return size;
 
 	else return PAGE_SIZE-offset;
 }
+
+/* splits a INT which is 4 bytes to 4 uint8_t numbers (also known as unsigned char) so we can write it to the EEPROM or send it via custom hid protocol (USB)*/
 void split_data_int(uint8_t* dataArr, int num){
 
 	uint8_t *p;
@@ -388,6 +397,7 @@ void split_data_int(uint8_t* dataArr, int num){
 	}
 
 }
+/* splits a float which is 4 bytes to 4 uint8_t numbers (also known as unsigned char) so we can write it to the EEPROM or send it via custom hid protocol (USB)*/
 void split_data_float(uint8_t* dataArr, float num){
 
 	uint8_t *p;
@@ -401,6 +411,8 @@ void split_data_float(uint8_t* dataArr, float num){
 	}
 
 }
+
+/* this function saves the data it recieved via USB to an external eeprom or internal flash, depends on which function is called below*/
 void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t eeprom_addr){
 
 	uint8_t arr[128] = {0},tempArr[4] = {0};
@@ -444,16 +456,17 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	debug_printf("data write to eeprom: \r\n");
 	debug_print_array(arr,128);
 	HAL_Delay(10);
+	//EEPROM_Write(hi2cx,eeprom_addr,16, 0, arr, 128);
 	writeToFlash(arr);
 }
-
+/*reads data from an external EEPROM or internal flash, depends on which function is called*/
 void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t eeprom_addr){
 
 	uint8_t arr[128] = {0};
 	uint8_t currentIndex = 0;
 
 
-	//EEPROM_Read(hi2cx,eeprom_addr,8, 0, arr, 128);
+	//EEPROM_Read(hi2cx,eeprom_addr,16, 0, arr, 128);
 
 	readFromFlash(arr);
 
@@ -487,7 +500,7 @@ void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
         for(int i = 0;i < 10;i++){debug_printf("%d: %d \r\n",i,(int)time[i]);}
 
 }
-
+/*writes a provided array to internal flash of the microcontroler*/
 void writeToFlash(uint8_t* arr){
 
 
@@ -514,10 +527,10 @@ void writeToFlash(uint8_t* arr){
 
 
 }
-
+/*reads 128 bytes of data from internal flash on the set page adress and stores it to the provided array*/
 void readFromFlash(uint8_t* arr){
 
-	uint32_t pageAddress = 0x0803F800;
+	uint32_t pageAddress = 0x0803F800; //flash block 127 (the last one)
 	uint64_t dataArr[16]= {0};	
 	HAL_FLASH_Unlock();
 

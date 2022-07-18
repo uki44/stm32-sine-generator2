@@ -168,7 +168,7 @@ int main(void)
     {
      // debug_printf("entered state 0:%d, 1:%d \r\n", buffer[0], buffer[1]); //debug information
 
-      if (buffer[1] == 1)
+      if (buffer[1] == 1)  // checks if the buffer recieved is marked as the first one
       {
 
         memcpy((uint8_t *)buffer1, (uint8_t *)buffer, 64);
@@ -178,7 +178,7 @@ int main(void)
         debug_print_array(buffer1, 64);
         
       }
-      if (buffer[1] == 2)
+      if (buffer[1] == 2) // checks if the buffer recieved is marked as the second one and processes the recieved data as we only expect 2 buffers
       {
 
         memcpy((uint8_t *)buffer2, (uint8_t *)buffer, 64);
@@ -205,9 +205,9 @@ int main(void)
           ssd1306_WriteString("usb",Font_6x8,White);
           ssd1306_UpdateScreen();
 
-          if(buffer2[62] == 1){
+          if(buffer2[62] == 1){ // checks if the data recieved via usb needs to be stored to flash or eeprom
 
-            savePreset(frequencies,voltages,time,&hi2c1,EEPROM_ADDR);
+            savePreset(frequencies,voltages,time,&hi2c1,EEPROM_ADDR); //saves the data to either eeprom or internal flash 
 
             ssd1306_SetCursor(0,54);
             ssd1306_WriteString("written to eeprom",Font_6x8,White);
@@ -228,14 +228,14 @@ int main(void)
       setDigiPot(&hi2c1,voltages[currentSet],DIGIPOT_ADDR);  
       cursor_pos_x = 2; 
       cursor_pos_y = 0;
-    	writeDataInfoToScreen(msgString,frequencies, voltages,  time, currentSet, cursor_pos_x, cursor_pos_y);
+    	writeDataInfoToScreen(msgString,frequencies, voltages,  time, currentSet, cursor_pos_x, cursor_pos_y); // writes current settings to the oled display
       processState = 2;
       curtime = HAL_GetTick();
       
       
     }
 
-    if((HAL_GetTick() > ((time[currentSet]*60*1000) + curtime)) && processState == 2){ //time[currentSet]*60*1000000
+    if((HAL_GetTick() > ((time[currentSet]*60*1000) + curtime)) && processState == 2){ //checks if enough time has passed to move on to the next set of data
       
       processState = 1; 
       currentSet++;
@@ -243,8 +243,8 @@ int main(void)
 
       }
 
-      if(currentSet >= 10 && processState != 100){
-        processState = 100;
+      if(currentSet >= 10 && processState != 100){ // marks the end of the process and displays it to the I2C oled display
+        processState = 100; 
         ssd1306_Fill(Black);
 	      ssd1306_UpdateScreen();
         ssd1306_SetCursor(0,32);
