@@ -146,7 +146,7 @@ int main(void)
   initDigiPot(&hi2c1,DIGIPOT_ADDR);
 
   
-  for(int i = 0; i < 16; i++){EEPROM_PageErase (&hi2c1,EEPROM_ADDR,i);}
+  /*for(int i = 0; i < 16; i++){EEPROM_PageErase (&hi2c1,EEPROM_ADDR,i);}*/
   
 
   debug_printf("successful init \r\n");

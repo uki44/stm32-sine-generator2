@@ -212,7 +212,7 @@ void setDigiPot(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr){  //w
 	trainsmitArr[0] = 0;
 	trainsmitArr[1] = wiperPos;
 	
-	HAL_I2C_Master_Transmit(I2C,digiPotAddr  << 1,trainsmitArr,2,100); //writes the calculated wiperpos to the digipot via I2C
+	HAL_I2C_Master_Transmit(I2C,digiPotAddr,trainsmitArr,2,100); //writes the calculated wiperpos to the digipot via I2C
 	
 
 }
@@ -310,30 +310,25 @@ void initDigiPot(I2C_HandleTypeDef* i2cx,uint8_t device_addr){
 
 void EEPROM_Write(I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
 
-	int paddrposition = log(PAGE_SIZE)/log(2);
+uint8_t transmit_arr[20],cur_page = page;
 
-	uint16_t startPage = page;
-	uint16_t endPage = page + ((size+offset)/PAGE_SIZE);
 
-	uint16_t numofpages = (endPage-startPage) + 1;
-	uint16_t pos=0;
 
-	for (int i=0; i<numofpages; i++){
+//HAL_I2C_Mem_Write(i2cx,eeprom_addr, 8, 16, p, 128, 100);
+//transmit_arr[0] = cur_page;
+for(int i = 0; i < 8; i+=2){
+	for(int j = i*16, k = 0; k<16;j++,k++){
+		
+		transmit_arr[k] = data[j];
 
-		uint16_t MemAddress = startPage<<paddrposition | offset;
-		uint16_t bytesremaining = bytestowrite(size, offset);  
-
-		HAL_I2C_Mem_Write(i2cx,eeprom_addr, MemAddress, 2, &data[pos], bytesremaining, 1000);
-
-		startPage += 1;
-		offset=0;
-		size = size-bytesremaining; 
-		pos += bytesremaining;
-
-		HAL_Delay (5); //5ms delay for stability reasons
-
+		
 	}
+	HAL_I2C_Mem_Write(i2cx,eeprom_addr,cur_page,I2C_MEMADD_SIZE_8BIT,transmit_arr,16,100);
+	//HAL_I2C_Master_Transmit(i2cx,eeprom_addr,transmit_arr,17,100);
+	cur_page++;
 
+
+}
 
 }
 
@@ -351,7 +346,7 @@ void EEPROM_Read (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uin
 
 		uint16_t MemAddress = startPage<<paddrposition | offset;
 		uint16_t bytesremaining = bytestowrite(size, offset);
-		HAL_I2C_Mem_Read(i2cx, eeprom_addr, MemAddress, 2, &data[pos], bytesremaining, 1000);
+		HAL_I2C_Mem_Read(i2cx, eeprom_addr, MemAddress, I2C_MEMADD_SIZE_8BIT, &data[pos], bytesremaining, 1000);
 		startPage += 1;
 		offset=0;
 		size = size-bytesremaining;
@@ -456,8 +451,8 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	debug_printf("data write to eeprom: \r\n");
 	debug_print_array(arr,128);
 	HAL_Delay(10);
-	//EEPROM_Write(hi2cx,eeprom_addr,16, 0, arr, 128);
-	writeToFlash(arr);
+	EEPROM_Write(hi2cx,eeprom_addr,0x08, 0, arr, 128);
+	//writeToFlash(arr);
 }
 /*reads data from an external EEPROM or internal flash, depends on which function is called*/
 void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t eeprom_addr){
@@ -466,9 +461,9 @@ void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	uint8_t currentIndex = 0;
 
 
-	//EEPROM_Read(hi2cx,eeprom_addr,16, 0, arr, 128);
+	EEPROM_Read(hi2cx,eeprom_addr,0x08, 0, arr, 128);
 
-	readFromFlash(arr);
+	//readFromFlash(arr);
 
 	debug_printf("read array from eeprom: \r\n");
 	debug_print_array(arr,128);

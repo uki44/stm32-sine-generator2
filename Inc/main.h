@@ -51,7 +51,7 @@ extern int processState;
 #define DIGIPOT_ADDR 0x2C << 1
 #define OLED_ADDR 0x3C
 
-#define PAGE_NUM 32  //number of pages on the eeprom chip
+#define PAGE_NUM 16  //number of pages on the eeprom chip
 #define PAGE_SIZE 16 // size of a single page in bytes on the eeprom
 
 typedef enum states{STATE_INIT, STATE_DATA_SET, STATE_RUN, STATE_NEXT_DATA_SET,STATE_USE_DATA_EEPROM}state_t;
