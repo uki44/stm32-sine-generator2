@@ -23,6 +23,7 @@ uint32_t TIM_GetCounter(TIM_TypeDef* TIMx);
 void TIM_resetCounder(TIM_TypeDef* TIMx);
 void TIM_setPrescaler(TIM_TypeDef* TIMx,int val);
 void setDigiPot(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr);
+void setDigiPot2(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr);
 void debugI2Cscan(I2C_HandleTypeDef *hi2cx,UART_HandleTypeDef *huartx);
 void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef *hi2cx,uint16_t eeprom_addr);
 void writeDataInfoToScreen(char msgString[4][50],float*  float_arr,float* voltage_arr, int* time_arr,int set,uint8_t cursor_pos_x,uint8_t cursor_pos_y);

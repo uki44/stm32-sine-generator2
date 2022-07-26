@@ -216,6 +216,36 @@ void setDigiPot(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr){  //w
 	
 
 }
+void setDigiPot2(I2C_HandleTypeDef* I2C,float voltage, uint8_t digiPotAddr){
+
+	float dac_voltage, A_amp = 4, digipot_R = 10000, digipot_current,R2_voltage,R1,R2; // the 10k value needs to be later adjusted with the included wiper resistance
+	uint8_t digipotResolution = 64;
+	uint8_t wiperPos;
+	uint8_t data_arr[5] = {0};
+
+	dac_voltage = 3.3;  
+
+	digipot_current =  dac_voltage / digipot_R;
+
+	R2_voltage = voltage/A_amp;
+
+	R2 = R2_voltage/digipot_current;
+
+	R1 = digipot_R - R2;
+
+	wiperPos = R1*(digipotResolution/digipot_R);
+
+	data_arr[0] = 0;
+	data_arr[1] = wiperPos;
+
+
+	HAL_I2C_Master_Transmit(I2C,digiPotAddr,data_arr,2,100);
+
+
+	
+
+
+}
 /*this function scans the i2c bus for devices and prints their addresses to the serial console, it is used to check if all 3 i2c devices are connected and functioning*/
 void debugI2Cscan(I2C_HandleTypeDef *hi2cx,UART_HandleTypeDef *huartx){ 
 

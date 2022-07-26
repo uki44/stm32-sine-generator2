@@ -225,7 +225,7 @@ int main(void)
       if(dataCurrentState != RECIEVED_FROM_USB &&  btn_guard == 1){readPreset(frequencies,voltages,time,&hi2c1,EEPROM_ADDR); btn_guard = 2;}   
 
       setARR(frequencies,currentSet);
-      setDigiPot(&hi2c1,voltages[currentSet],DIGIPOT_ADDR);  
+      setDigiPot2(&hi2c1,voltages[currentSet],DIGIPOT_ADDR);  
       cursor_pos_x = 2; 
       cursor_pos_y = 0;
     	writeDataInfoToScreen(msgString,frequencies, voltages,  time, currentSet, cursor_pos_x, cursor_pos_y); // writes current settings to the oled display
