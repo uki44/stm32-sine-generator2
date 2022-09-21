@@ -340,7 +340,7 @@ void initDigiPot(I2C_HandleTypeDef* i2cx,uint8_t device_addr){
 
 void EEPROM_Write(I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
 
-uint8_t transmit_arr[20],cur_page = page;
+uint8_t transmit_arr[20] = {0},cur_page = page;
 
 
 
@@ -364,27 +364,23 @@ for(int i = 0; i < 8; i+=2){
 
 void EEPROM_Read (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uint16_t offset, uint8_t *data, uint16_t size){
 
-		int paddrposition = log(PAGE_SIZE)/log(2);
+	
+	uint8_t recieve_arr[20] = {0},cur_page = page;
 
-		uint16_t startPage = page;
-		uint16_t endPage = page + ((size+offset)/PAGE_SIZE);
+	for(int i = 0; i < 8; i+=2){
+	
+	HAL_I2C_Mem_Read(i2cx,eeprom_addr,cur_page,I2C_MEMADD_SIZE_8BIT,recieve_arr,16,100);
 
-		uint16_t numofpages = (endPage-startPage)+1;
-		uint16_t pos=0;
+		for(int j = i*16,k = 0;k < 16;j++,k++){
 
-		for (int i=0; i<numofpages; i++){
-
-		uint16_t MemAddress = startPage<<paddrposition | offset;
-		uint16_t bytesremaining = bytestowrite(size, offset);
-		HAL_I2C_Mem_Read(i2cx, eeprom_addr, MemAddress, I2C_MEMADD_SIZE_8BIT, &data[pos], bytesremaining, 1000);
-		startPage += 1;
-		offset=0;
-		size = size-bytesremaining;
-		pos += bytesremaining;
-
-
+			data[j] = recieve_arr[k];
 
 		}
+
+
+		cur_page++;
+	}
+
 
 
 }
@@ -481,7 +477,7 @@ void savePreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	debug_printf("data write to eeprom: \r\n");
 	debug_print_array(arr,128);
 	HAL_Delay(10);
-	EEPROM_Write(hi2cx,eeprom_addr,0x08, 0, arr, 128);
+	EEPROM_Write(hi2cx,eeprom_addr,8, 0, arr, 128);
 	//writeToFlash(arr);
 }
 /*reads data from an external EEPROM or internal flash, depends on which function is called*/
@@ -491,7 +487,7 @@ void readPreset(float *floatArr,float *voltageArr,int *timeArr,I2C_HandleTypeDef
 	uint8_t currentIndex = 0;
 
 
-	EEPROM_Read(hi2cx,eeprom_addr,0x08, 0, arr, 128);
+	EEPROM_Read(hi2cx,eeprom_addr,8, 0, arr, 128);
 
 	//readFromFlash(arr);
 

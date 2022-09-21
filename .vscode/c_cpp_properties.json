@@ -173,7 +173,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60103",
+                "PLATFORMIO=60104",
                 "STM32L433xx",
                 "USE_HAL_DRIVER",
                 "F_CPU=80000000L",
