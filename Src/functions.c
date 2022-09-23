@@ -346,7 +346,7 @@ uint8_t transmit_arr[20] = {0},cur_page = page;
 
 //HAL_I2C_Mem_Write(i2cx,eeprom_addr, 8, 16, p, 128, 100);
 //transmit_arr[0] = cur_page;
-for(int i = 0; i < 8; i+=2){
+for(int i = 0; i < 8; i++){ // maybe i+=2
 	for(int j = i*16, k = 0; k<16;j++,k++){
 		
 		transmit_arr[k] = data[j];
@@ -354,6 +354,7 @@ for(int i = 0; i < 8; i+=2){
 		
 	}
 	HAL_I2C_Mem_Write(i2cx,eeprom_addr,cur_page,I2C_MEMADD_SIZE_8BIT,transmit_arr,16,100);
+	while(HAL_I2C_GetState(i2cx)!= HAL_I2C_STATE_READY){}
 	//HAL_I2C_Master_Transmit(i2cx,eeprom_addr,transmit_arr,17,100);
 	cur_page++;
 
@@ -367,10 +368,11 @@ void EEPROM_Read (I2C_HandleTypeDef* i2cx,uint8_t eeprom_addr,uint16_t page, uin
 	
 	uint8_t recieve_arr[20] = {0},cur_page = page;
 
-	for(int i = 0; i < 8; i+=2){
+	for(int i = 0; i < 8; i++){ // maybe i+=2
 	
 	HAL_I2C_Mem_Read(i2cx,eeprom_addr,cur_page,I2C_MEMADD_SIZE_8BIT,recieve_arr,16,100);
-
+	while(HAL_I2C_GetState(i2cx)!= HAL_I2C_STATE_READY){}
+	
 		for(int j = i*16,k = 0;k < 16;j++,k++){
 
 			data[j] = recieve_arr[k];
